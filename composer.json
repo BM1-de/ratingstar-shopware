@@ -1,0 +1,26 @@
+{
+    "name": "ratingstar/shopware-seal",
+    "description": "RatingStar-Siegel und Google-Sterne (Rich Snippets) für Shopware 6.",
+    "type": "shopware-platform-plugin",
+    "license": "proprietary",
+    "version": "0.1.0",
+    "autoload": {
+        "psr-4": {
+            "RatingStar\\Seal\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "RatingStar\\Seal\\RatingStarSeal",
+        "label": {
+            "de-DE": "RatingStar Siegel & Google-Sterne",
+            "en-GB": "RatingStar seal & Google stars"
+        },
+        "description": {
+            "de-DE": "RatingStar-Siegel und Google-Sterne (Rich Snippets) einbinden.",
+            "en-GB": "Embed the RatingStar seal and Google stars (rich snippets)."
+        }
+    },
+    "require": {
+        "shopware/core": "~6.7.0"
+    }
+}
