@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/layout/meta.html.twig' %}
+
+{# Inject the server-side LocalBusiness rich snippet once into <head>
+   (CONTRACT §2.6). rs_seal_jsonld() returns '' unless the option is on and a
+   valid API key is configured, so this is inert otherwise. #}
+{% block layout_head_meta_tags %}
+    {{ parent() }}
+    {{ rs_seal_jsonld() }}
+{% endblock %}

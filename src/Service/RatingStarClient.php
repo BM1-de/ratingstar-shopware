@@ -71,6 +71,24 @@ class RatingStarClient
     }
 
     /**
+     * The finished, server-built JSON-LD object via the key-scoped endpoint
+     * (CONTRACT §1 — the recommended path). The app already applies the tier /
+     * count logic: a bare LocalBusiness under 4-Star or count 0, otherwise with
+     * aggregateRating + reviews. We pass it through unchanged (CONTRACT §2.8).
+     * Null when no valid key.
+     */
+    public function getJsonLdByKey(?string $salesChannelId = null): ?array
+    {
+        if (!$this->config->hasValidApiKey($salesChannelId)) {
+            return null;
+        }
+
+        $key = (string) $this->config->getApiKey($salesChannelId);
+
+        return $this->fetchJson($this->config->url('/seal/k/' . rawurlencode($key) . '.jsonld', $salesChannelId), self::TTL_JSONLD);
+    }
+
+    /**
      * GET a RatingStar JSON resource, cached + tagged. Returns the decoded
      * array, or null on any transport/HTTP/decoding failure (graceful).
      */

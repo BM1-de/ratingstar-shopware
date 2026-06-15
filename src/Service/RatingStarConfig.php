@@ -76,6 +76,31 @@ class RatingStarConfig
         return $this->getSlug($salesChannelId) !== null || $this->hasValidApiKey($salesChannelId);
     }
 
+    /**
+     * Whether the admin opted into the server-side rich snippet (default on).
+     * This is the recommended SEO path (CONTRACT §2.6) and needs no client
+     * connection to the RatingStar origin.
+     */
+    public function isServerRichSnippetEnabled(?string $salesChannelId = null): bool
+    {
+        $value = $this->systemConfig->get(self::CONFIG_DOMAIN . 'serverRichSnippet', $salesChannelId);
+
+        // Unset → default on. Shopware returns null for an untouched bool.
+        return $value === null ? true : (bool) $value;
+    }
+
+    /**
+     * True when this plugin will actually emit a server-side JSON-LD block:
+     * the option is on and a valid key exists (the .jsonld endpoint is
+     * key-scoped). Used to decide whether widgets must carry
+     * data-no-richsnippet="1" so seal.js suppresses its client injection
+     * (CONTRACT §2.7).
+     */
+    public function isServerJsonLdActive(?string $salesChannelId = null): bool
+    {
+        return $this->isServerRichSnippetEnabled($salesChannelId) && $this->hasValidApiKey($salesChannelId);
+    }
+
     /** Build an absolute RatingStar URL from a path ("/seal.js", "/seal/k/<key>.json", …). */
     public function url(string $path, ?string $salesChannelId = null): string
     {

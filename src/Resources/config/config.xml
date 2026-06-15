@@ -35,6 +35,20 @@
     </card>
 
     <card>
+        <title>Google stars (rich snippet)</title>
+        <title lang="de-DE">Google-Sterne (Rich Snippet)</title>
+
+        <input-field type="bool">
+            <name>serverRichSnippet</name>
+            <label>Emit server-side rich snippet (recommended)</label>
+            <label lang="de-DE">Server-seitiges Rich Snippet ausgeben (empfohlen)</label>
+            <defaultValue>true</defaultValue>
+            <helpText>Outputs one LocalBusiness JSON-LD block (with aggregate rating) into the page head, server-side — the SEO path for Google stars, with no client connection to RatingStar. Needs a valid API key. When on, the seal widgets are told not to inject their own client-side JSON-LD, so there is exactly one block per page.</helpText>
+            <helpText lang="de-DE">Gibt einen LocalBusiness-JSON-LD-Block (mit Aggregat-Bewertung) server-seitig in den Seiten-Head aus — der SEO-Weg für die Google-Sterne, ohne Client-Verbindung zu RatingStar. Benötigt einen gültigen API-Key. Ist die Option an, unterdrücken die Siegel-Widgets ihr eigenes Client-JSON-LD, sodass es genau einen Block pro Seite gibt.</helpText>
+        </input-field>
+    </card>
+
+    <card>
         <title>Privacy &amp; delivery (please read)</title>
         <title lang="de-DE">Datenschutz &amp; Auslieferung (bitte lesen)</title>
 

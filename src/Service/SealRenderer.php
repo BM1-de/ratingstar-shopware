@@ -31,16 +31,22 @@ class SealRenderer
      * @param string|null $variant       canonical key or alias; null → default
      * @param string|null $slug          per-embed slug override; null → config slug
      * @param string|null $position      only applied to floating/footer-bar
-     * @param bool        $noRichSnippet set when the plugin emits server JSON-LD
+     * @param bool|null   $noRichSnippet null → auto: set when this plugin emits
+     *                                   server JSON-LD; true/false forces it
      */
     public function render(
         ?string $variant = null,
         ?string $slug = null,
         ?string $position = null,
-        bool $noRichSnippet = false,
+        ?bool $noRichSnippet = null,
         ?string $salesChannelId = null,
     ): string {
         $slug = $slug !== null && trim($slug) !== '' ? trim($slug) : $this->config->getSlug($salesChannelId);
+
+        // Auto-couple with the server-side JSON-LD: if this plugin emits its own
+        // LocalBusiness block, tell seal.js to skip its client injection
+        // (CONTRACT §2.7). An explicit bool from the caller wins.
+        $noRichSnippet ??= $this->config->isServerJsonLdActive($salesChannelId);
 
         // Without a slug seal.js has nothing to scan — emit nothing rather than
         // a broken node.

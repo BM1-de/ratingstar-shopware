@@ -22,8 +22,14 @@
             <argument type="service" id="RatingStar\Seal\Service\VariantRegistry"/>
         </service>
 
+        <service id="RatingStar\Seal\Service\JsonLdRenderer">
+            <argument type="service" id="RatingStar\Seal\Service\RatingStarClient"/>
+            <argument type="service" id="RatingStar\Seal\Service\RatingStarConfig"/>
+        </service>
+
         <service id="RatingStar\Seal\Storefront\Twig\SealExtension">
             <argument type="service" id="RatingStar\Seal\Service\SealRenderer"/>
+            <argument type="service" id="RatingStar\Seal\Service\JsonLdRenderer"/>
             <tag name="twig.extension"/>
         </service>
 
