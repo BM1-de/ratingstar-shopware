@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Connection</title>
+        <title lang="de-DE">Verbindung</title>
+
+        <input-field type="text">
+            <name>baseOrigin</name>
+            <label>RatingStar base origin</label>
+            <label lang="de-DE">RatingStar-Adresse (Base-Origin)</label>
+            <defaultValue>https://ratingstar.de</defaultValue>
+            <helpText>Origin from which every RatingStar URL is built (seal.js, data, JSON-LD). Leave at the default unless you run a staging or self-hosted RatingStar instance.</helpText>
+            <helpText lang="de-DE">Adresse, aus der alle RatingStar-URLs gebaut werden (seal.js, Daten, JSON-LD). Nur für Staging oder selbst gehostete RatingStar-Instanzen ändern.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>slug</name>
+            <label>Profile slug</label>
+            <label lang="de-DE">Profil-Slug</label>
+            <placeholder>meine-filiale</placeholder>
+            <helpText>The /t/&lt;slug&gt; handle of your RatingStar profile. Note: the slug-based path only delivers once you have entered and DNS-verified your domain in the RatingStar admin tab "Auslieferung" (Delivery). The key path below works on all plans without that.</helpText>
+            <helpText lang="de-DE">Der /t/&lt;slug&gt;-Handle Ihres RatingStar-Profils. Hinweis: Der slug-basierte Weg liefert erst aus, wenn Ihre Domain im RatingStar-Admin unter „Auslieferung" eingetragen und per DNS verifiziert ist. Der Key-Weg unten funktioniert ohne das auf allen Tarifen.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>apiKey</name>
+            <label>API key (rs_live_…)</label>
+            <label lang="de-DE">API-Key (rs_live_…)</label>
+            <placeholder>rs_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</placeholder>
+            <helpText>Format: rs_live_ followed by 40 characters (48 total). Drives the rename-proof key endpoints and Google stars; open on all plans — preferred over the slug. Rotating the key in the RatingStar admin invalidates old key embeds.</helpText>
+            <helpText lang="de-DE">Format: rs_live_ gefolgt von 40 Zeichen (48 gesamt). Treibt die rename-festen Key-Endpunkte und die Google-Sterne; auf allen Tarifen offen — dem Slug vorzuziehen. Eine Rotation des Keys im RatingStar-Admin entwertet alte Key-Embeds.</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Privacy &amp; delivery (please read)</title>
+        <title lang="de-DE">Datenschutz &amp; Auslieferung (bitte lesen)</title>
+
+        <input-field type="bool">
+            <name>privacyAcknowledged</name>
+            <label>I have addressed the RatingStar origin in my privacy policy / consent tool</label>
+            <label lang="de-DE">Ich habe die RatingStar-Adresse in Datenschutzerklärung / Consent-Tool berücksichtigt</label>
+            <defaultValue>false</defaultValue>
+            <helpText>seal.js, seal.css, the widget data and the tracking pixel load from the RatingStar origin (a third-party host), so the visitor's browser connects to it. Name the RatingStar origin in your privacy policy and handle it in your consent tool. The server-side rich-snippet (JSON-LD) path needs no client connection. This checkbox is a reminder only.</helpText>
+            <helpText lang="de-DE">seal.js, seal.css, die Widget-Daten und das Tracking-Pixel laden von der RatingStar-Adresse (Dritt-Host) — der Browser des Besuchers verbindet sich also dorthin. Nennen Sie die RatingStar-Adresse in Ihrer Datenschutzerklärung und behandeln Sie sie im Consent-Tool. Der server-seitige Rich-Snippet-Weg (JSON-LD) braucht keine Client-Verbindung. Diese Checkbox ist nur ein Hinweis.</helpText>
+        </input-field>
+    </card>
+</config>
