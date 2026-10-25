@@ -20,8 +20,8 @@
             <label>Profile slug</label>
             <label lang="de-DE">Profil-Slug</label>
             <placeholder>meine-filiale</placeholder>
-            <helpText>The /t/&lt;slug&gt; handle of your RatingStar profile. Note: the slug-based path only delivers once you have entered and DNS-verified your domain in the RatingStar admin tab "Auslieferung" (Delivery). The key path below works on all plans without that.</helpText>
-            <helpText lang="de-DE">Der /t/&lt;slug&gt;-Handle Ihres RatingStar-Profils. Hinweis: Der slug-basierte Weg liefert erst aus, wenn Ihre Domain im RatingStar-Admin unter „Auslieferung" eingetragen und per DNS verifiziert ist. Der Key-Weg unten funktioniert ohne das auf allen Tarifen.</helpText>
+            <helpText>The /t/&lt;slug&gt; handle of your RatingStar profile. Note: the slug-based path only delivers once you have entered and DNS-verified your domain in the RatingStar admin (Siegel &amp; Widgets → Domains &amp; Statistik). The key path below works on all plans without that.</helpText>
+            <helpText lang="de-DE">Der /t/&lt;slug&gt;-Handle Ihres RatingStar-Profils. Hinweis: Der slug-basierte Weg liefert erst aus, wenn Ihre Domain im RatingStar-Admin unter „Siegel &amp; Widgets → Domains &amp; Statistik" eingetragen und per DNS verifiziert ist. Der Key-Weg unten funktioniert ohne das auf allen Tarifen.</helpText>
         </input-field>
 
         <input-field type="text">

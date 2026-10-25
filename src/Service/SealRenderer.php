@@ -6,7 +6,7 @@ namespace RatingStar\Seal\Service;
  * Builds the official seal embed markup (CONTRACT §2.4):
  *
  *   <div class="rs-seal" data-slug="…" data-variant="…"
- *        [data-position="…"] [data-no-richsnippet="1"]></div>
+ *        [data-position="…"] [data-no-richsnippet="1"] [data-theme="dark" …]></div>
  *   <script src="<origin>/seal.js" async></script>
  *
  * The <script> is emitted once per render pass even with several widgets —
@@ -30,9 +30,11 @@ class SealRenderer
     /**
      * @param string|null $variant       canonical key or alias; null → default
      * @param string|null $slug          per-embed slug override; null → config slug
-     * @param string|null $position      only applied to floating/footer-bar
+     * @param string|null $position      only applied to the profile card
      * @param bool|null   $noRichSnippet null → auto: set when this plugin emits
      *                                   server JSON-LD; true/false forces it
+     * @param array<string, mixed> $overrides per-embed appearance (CONTRACT §2.17),
+     *                                   e.g. ['theme' => 'dark', 'carCount' => 4]
      */
     public function render(
         ?string $variant = null,
@@ -40,6 +42,7 @@ class SealRenderer
         ?string $position = null,
         ?bool $noRichSnippet = null,
         ?string $salesChannelId = null,
+        array $overrides = [],
     ): string {
         $slug = $slug !== null && trim($slug) !== '' ? trim($slug) : $this->config->getSlug($salesChannelId);
 
@@ -69,6 +72,10 @@ class SealRenderer
 
         if ($noRichSnippet) {
             $attrs .= ' data-no-richsnippet="1"';
+        }
+
+        foreach ($this->variants->overrideAttributes($overrides) as $name => $value) {
+            $attrs .= sprintf(' %s="%s"', $name, $this->esc($value));
         }
 
         $html = sprintf('<div %s></div>', $attrs);

@@ -20,32 +20,56 @@ class VariantRegistry
      * Order matches the app; labels are the German UI labels from VARIANT_META.
      */
     public const VARIANT_META = [
-        'seal-circle'        => ['label' => 'Rundsiegel',     'category' => 'static'],
-        'seal-circle-banner' => ['label' => 'Banderole',      'category' => 'static'],
-        'profile-card'       => ['label' => 'Profil-Karte',   'category' => 'live'],
-        'bar'                => ['label' => 'Trust-Bar',      'category' => 'live'],
-        'floating'           => ['label' => 'Floating Badge', 'category' => 'live'],
-        'hero'               => ['label' => 'Hero-Snippet',   'category' => 'live'],
-        'quote'              => ['label' => 'Featured Quote', 'category' => 'live'],
-        'carousel'           => ['label' => 'Carousel',       'category' => 'live'],
-        'wall'               => ['label' => 'Wall of Love',   'category' => 'live'],
-        'footer-bar'         => ['label' => 'Footer-Bar',     'category' => 'live'],
+        'seal-circle'        => ['label' => 'Rundsiegel',       'category' => 'static'],
+        'seal-circle-banner' => ['label' => 'Banderole',        'category' => 'static'],
+        'profile-card'       => ['label' => 'Profil-Karte',     'category' => 'live'],
+        'bar'                => ['label' => 'Bewertungsleiste', 'category' => 'live'],
+        'hero'               => ['label' => 'Gesamtnote',       'category' => 'live'],
+        'quote'              => ['label' => 'Zitat',            'category' => 'live'],
+        'carousel'           => ['label' => 'Karussell',        'category' => 'live'],
+        'wall'               => ['label' => 'Bewertungswand',   'category' => 'live'],
+        'footer-bar'         => ['label' => 'Fußleiste',        'category' => 'live'],
     ];
 
     /** seal.js default when data-variant is absent (its `se`/O() fallback). */
     public const DEFAULT_VARIANT = 'seal-circle-banner';
 
-    /** Short aliases accepted by seal.js, mapped to the canonical keys. */
+    /**
+     * Legacy names accepted by seal.js (SealConfig::VARIANT_ALIAS), mapped to
+     * the canonical keys. The former floating badge is the profile card in a
+     * screen corner.
+     */
     private const ALIASES = [
-        'circle' => 'seal-circle',
-        'banner' => 'seal-circle-banner',
+        'circle'   => 'seal-circle',
+        'banner'   => 'seal-circle-banner',
+        'card'     => 'profile-card',
+        'floating' => 'profile-card',
+        'pro'      => 'profile-card',
     ];
 
-    /** Variants that carry a data-position (CONTRACT §2.4). */
-    public const POSITION_VARIANTS = ['floating', 'footer-bar'];
+    /** Only the profile card carries a data-position (CONTRACT §2.4). */
+    public const POSITION_VARIANTS = ['profile-card'];
 
-    /** Allowed data-position values (seal.js O() for the floating/pro variant). */
-    public const POSITIONS = ['bottom-right', 'bottom-left', 'top-right', 'top-left', 'inline'];
+    /** Allowed data-position values: inline or one of the four corners. */
+    public const POSITIONS = ['inline', 'bottom-right', 'bottom-left', 'top-right', 'top-left'];
+
+    /**
+     * Per-embed appearance keys seal.js accepts as data attributes, mirrored
+     * from EMBED_OVERRIDES in the app's seal-embed.js (CONTRACT §2.17).
+     * camelCase key → data-kebab attribute; seal.js validates the values.
+     */
+    public const OVERRIDE_KEYS = [
+        'size',
+        'pcPosition', 'pcWidth', 'pcShowCount', 'pcColor', 'pcMobile', 'pcClick',
+        'barShowCount', 'barShowVerified',
+        'heroShowCount', 'heroShowVerified',
+        'quotePick', 'quoteWidth',
+        'carCount', 'carRotate', 'carMin', 'carWidth',
+        'wallCols', 'wallTotal', 'wallMin', 'wallSort', 'wallWidth',
+        'footerBarBg', 'footerBarText', 'footerBarLinkColor', 'footerBarLinkHover', 'footerBarPosition',
+        'reviewsOnlyNamed', 'reviewsOnlyWithComment',
+        'theme',
+    ];
 
     /** @return list<string> the full canonical variant set, in order. */
     public function all(): array
@@ -89,6 +113,32 @@ class VariantRegistry
     public function supportsPosition(string $variant): bool
     {
         return in_array($this->normalize($variant), self::POSITION_VARIANTS, true);
+    }
+
+    /**
+     * Whitelisted overrides as data attributes (pcColor → data-pc-color).
+     * Empty values mean "use the RatingStar settings" and emit nothing, so
+     * the app's defaults stay in charge; booleans become '1'/'0'.
+     *
+     * @param array<string, mixed> $overrides
+     * @return array<string, string>
+     */
+    public function overrideAttributes(array $overrides): array
+    {
+        $attributes = [];
+        foreach (self::OVERRIDE_KEYS as $key) {
+            $value = $overrides[$key] ?? null;
+            if (is_bool($value)) {
+                $value = $value ? '1' : '0';
+            }
+            $value = trim((string) $value);
+            if ($value === '') {
+                continue;
+            }
+            $attributes['data-' . strtolower((string) preg_replace('/[A-Z]/', '-$0', $key))] = $value;
+        }
+
+        return $attributes;
     }
 
     /** Validate a position value for a variant; null if unsupported/invalid. */

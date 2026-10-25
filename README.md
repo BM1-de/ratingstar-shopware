@@ -9,8 +9,10 @@ Issues dieses Repos.
 ## Geplanter Funktionsumfang
 
 - Plugin-Konfiguration (System Config): RatingStar-Profil-Slug + Embed-Key
-- Siegel-Widget (Rundsiegel, Banderole, Floating-Badge) als
-  Storefront-Block / CMS-Element
+- Siegel-Widget im vollen Satz (Rundsiegel, Banderole, Profil-Karte,
+  Bewertungsleiste, Gesamtnote, Zitat, Karussell, Bewertungswand, Fußleiste)
+  als Twig-Funktion `rs_seal()` — inkl. Optik-Optionen wie
+  `overrides={theme: 'dark'}` — und als CMS-Element
 - Google-Sterne: serverseitiges JSON-LD über den offiziellen
   RatingStar-Endpunkt (`/seal/k/<key>.json`)
 

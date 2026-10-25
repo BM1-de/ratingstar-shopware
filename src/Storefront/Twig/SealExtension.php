@@ -12,11 +12,13 @@ use Twig\TwigFunction;
  * Storefront embed points (CONTRACT §2.13):
  *
  *   {{ rs_seal() }}                                {# config slug, default variant #}
- *   {{ rs_seal(variant='floating', position='bottom-left', slug='other-branch') }}
+ *   {{ rs_seal(variant='profile-card', position='bottom-left', slug='other-branch') }}
+ *   {{ rs_seal(variant='carousel', overrides={theme: 'dark', carCount: 4}) }}
  *   {{ rs_seal_jsonld() }}                         {# server LocalBusiness in <head> #}
  *
  * rs_seal takes per-call slug + variant (+ position) overrides so this point
- * never silently falls back to global-only. rs_seal_jsonld is wired into the
+ * never silently falls back to global-only, plus the per-embed appearance
+ * keys of seal.js (CONTRACT §2.17) as `overrides`. rs_seal_jsonld is wired into the
  * head template and emits the server-side rich snippet once.
  */
 class SealExtension extends AbstractExtension
@@ -52,6 +54,7 @@ class SealExtension extends AbstractExtension
         ?string $slug = null,
         ?string $position = null,
         ?bool $noRichSnippet = null,
+        array $overrides = [],
     ): string {
         return $this->renderer->render(
             $variant,
@@ -59,6 +62,7 @@ class SealExtension extends AbstractExtension
             $position,
             $noRichSnippet,
             $this->resolveSalesChannelId($context),
+            $overrides,
         );
     }
 
