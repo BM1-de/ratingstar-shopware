@@ -1,0 +1,66 @@
+{
+  "main.js": {
+    "file": "assets/rating-star-seal-BKtLkiKP.js",
+    "name": "rating-star-seal",
+    "src": "main.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "module/sw-cms/blocks/rs-seal/preview/index.js",
+      "module/sw-cms/blocks/rs-seal/component/index.js",
+      "module/sw-cms/elements/rs-seal/preview/index.js",
+      "module/sw-cms/elements/rs-seal/config/index.js",
+      "module/sw-cms/elements/rs-seal/component/index.js"
+    ],
+    "css": [
+      "assets/rating-star-seal-C0WF9NnA.css"
+    ]
+  },
+  "module/sw-cms/blocks/rs-seal/component/index.js": {
+    "file": "assets/index-C6ZwhmH-.js",
+    "name": "index",
+    "src": "module/sw-cms/blocks/rs-seal/component/index.js",
+    "isDynamicEntry": true
+  },
+  "module/sw-cms/blocks/rs-seal/preview/index.js": {
+    "file": "assets/index-D9Z5vApD.js",
+    "name": "index",
+    "src": "module/sw-cms/blocks/rs-seal/preview/index.js",
+    "isDynamicEntry": true,
+    "css": [
+      "assets/index-BSgEzHnj.css"
+    ]
+  },
+  "module/sw-cms/elements/rs-seal/component/index.js": {
+    "file": "assets/index-vuEVAEr6.js",
+    "name": "index",
+    "src": "module/sw-cms/elements/rs-seal/component/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "main.js"
+    ],
+    "css": [
+      "assets/index-BJA1FayW.css"
+    ]
+  },
+  "module/sw-cms/elements/rs-seal/config/index.js": {
+    "file": "assets/index-FBmfXwud.js",
+    "name": "index",
+    "src": "module/sw-cms/elements/rs-seal/config/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "main.js"
+    ],
+    "css": [
+      "assets/index-D5WqHDFJ.css"
+    ]
+  },
+  "module/sw-cms/elements/rs-seal/preview/index.js": {
+    "file": "assets/index-Sy0ENT3R.js",
+    "name": "index",
+    "src": "module/sw-cms/elements/rs-seal/preview/index.js",
+    "isDynamicEntry": true,
+    "css": [
+      "assets/index-BHm16RAO.css"
+    ]
+  }
+}

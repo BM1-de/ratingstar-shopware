@@ -1,0 +1,22 @@
+{% block sw_cms_block_rs_seal_preview %}
+<div class="sw-cms-preview-rs-seal">
+    <svg
+        class="sw-cms-preview-rs-seal__mark"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 64 64"
+        aria-hidden="true"
+    >
+        <rect
+            width="64"
+            height="64"
+            rx="14"
+            fill="#1A1410"
+        />
+        <path
+            d="M32 11 L37.7 24.9 L52.8 26.4 L41.1 36.0 L44.1 50.8 L32 43.7 L19.9 50.8 L22.9 36.0 L11.2 26.4 L26.3 24.9 Z"
+            fill="#F5A524"
+        />
+    </svg>
+    <span class="sw-cms-preview-rs-seal__label">{{ $t('rs-seal.element.label') }}</span>
+</div>
+{% endblock %}

@@ -1,64 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
 
     <card>
         <title>Connection</title>
         <title lang="de-DE">Verbindung</title>
 
         <input-field type="text">
-            <name>baseOrigin</name>
-            <label>RatingStar base origin</label>
-            <label lang="de-DE">RatingStar-Adresse (Base-Origin)</label>
-            <defaultValue>https://ratingstar.de</defaultValue>
-            <helpText>Origin from which every RatingStar URL is built (seal.js, data, JSON-LD). Leave at the default unless you run a staging or self-hosted RatingStar instance.</helpText>
-            <helpText lang="de-DE">Adresse, aus der alle RatingStar-URLs gebaut werden (seal.js, Daten, JSON-LD). Nur für Staging oder selbst gehostete RatingStar-Instanzen ändern.</helpText>
+            <name>slug</name>
+            <label>Branch (profile slug)</label>
+            <label lang="de-DE">Filiale (Profil-Slug)</label>
+            <placeholder>cafe-sonne</placeholder>
+            <helpText>The part after /t/ in the address of your RatingStar profile. Used by every seal that has no profile of its own.</helpText>
+            <helpText lang="de-DE">Der Teil nach /t/ in der Adresse Ihres RatingStar-Profils. Gilt für jedes Siegel ohne eigene Angabe.</helpText>
         </input-field>
 
         <input-field type="text">
-            <name>slug</name>
-            <label>Profile slug</label>
-            <label lang="de-DE">Profil-Slug</label>
-            <placeholder>meine-filiale</placeholder>
-            <helpText>The /t/&lt;slug&gt; handle of your RatingStar profile. Note: the slug-based path only delivers once you have entered and DNS-verified your domain in the RatingStar admin (Siegel &amp; Widgets → Domains &amp; Statistik). The key path below works on all plans without that.</helpText>
-            <helpText lang="de-DE">Der /t/&lt;slug&gt;-Handle Ihres RatingStar-Profils. Hinweis: Der slug-basierte Weg liefert erst aus, wenn Ihre Domain im RatingStar-Admin unter „Siegel &amp; Widgets → Domains &amp; Statistik" eingetragen und per DNS verifiziert ist. Der Key-Weg unten funktioniert ohne das auf allen Tarifen.</helpText>
+            <name>group</name>
+            <label>Group (group slug)</label>
+            <label lang="de-DE">Gruppe (Gruppen-Slug)</label>
+            <helpText>Only for the seal of a whole group across all its branches: the part after /g/ in the address of the group profile. If filled in, seals without a profile of their own show the group instead of the branch. Then also enter the API key of the group below.</helpText>
+            <helpText lang="de-DE">Nur für das Siegel einer ganzen Gruppe über alle Filialen: der Teil nach /g/ in der Adresse des Gruppenprofils. Ist das Feld gefüllt, zeigen Siegel ohne eigene Angabe die Gruppe statt der Filiale. Tragen Sie dann unten auch den API-Key der Gruppe ein.</helpText>
         </input-field>
 
         <input-field type="text">
             <name>apiKey</name>
-            <label>API key (rs_live_…)</label>
-            <label lang="de-DE">API-Key (rs_live_…)</label>
-            <placeholder>rs_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</placeholder>
-            <helpText>Format: rs_live_ followed by 40 characters (48 total). Drives the rename-proof key endpoints and Google stars; open on all plans — preferred over the slug. Rotating the key in the RatingStar admin invalidates old key embeds.</helpText>
-            <helpText lang="de-DE">Format: rs_live_ gefolgt von 40 Zeichen (48 gesamt). Treibt die rename-festen Key-Endpunkte und die Google-Sterne; auf allen Tarifen offen — dem Slug vorzuziehen. Eine Rotation des Keys im RatingStar-Admin entwertet alte Key-Embeds.</helpText>
+            <label>API key</label>
+            <label lang="de-DE">API-Key</label>
+            <placeholder>rs_live_…</placeholder>
+            <helpText>API key of the branch or the group, format: rs_live_ followed by 40 characters. You find it in RatingStar on the page "Google-Sterne". The shop server uses it to fetch the data for the stars in Google; it stays valid when the profile slug changes. If the key is regenerated in RatingStar, the old one stops working at once: enter the new one here.</helpText>
+            <helpText lang="de-DE">API-Key der Filiale oder der Gruppe, Format: rs_live_ und 40 Zeichen. Sie finden ihn in RatingStar auf der Seite „Google-Sterne“. Mit dem Schlüssel holt der Shop-Server die Daten für die Sterne in Google ab; er bleibt gültig, auch wenn sich der Profil-Slug ändert. Wird der Schlüssel in RatingStar neu erzeugt, verliert der alte sofort seine Gültigkeit: Tragen Sie dann hier den neuen ein.</helpText>
         </input-field>
+
+        <input-field type="text">
+            <name>baseOrigin</name>
+            <label>Address of the RatingStar server</label>
+            <label lang="de-DE">Adresse des RatingStar-Servers</label>
+            <defaultValue>https://ratingstar.de</defaultValue>
+            <placeholder>https://ratingstar.de</placeholder>
+            <helpText>Every address for seals, data and profile links is built from this one. Default: https://ratingstar.de. Change it only for a test or self-hosted installation.</helpText>
+            <helpText lang="de-DE">Aus dieser einen Adresse entstehen alle Adressen für Siegel, Daten und Profil-Links. Standard: https://ratingstar.de. Nur für eine Test- oder eigene Installation ändern.</helpText>
+        </input-field>
+
+        <component name="rs-seal-connection-check">
+            <name>connectionCheck</name>
+        </component>
     </card>
 
     <card>
-        <title>Google stars (rich snippet)</title>
-        <title lang="de-DE">Google-Sterne (Rich Snippet)</title>
+        <title>Stars for Google</title>
+        <title lang="de-DE">Sterne für Google</title>
 
         <input-field type="bool">
             <name>serverRichSnippet</name>
-            <label>Emit server-side rich snippet (recommended)</label>
-            <label lang="de-DE">Server-seitiges Rich Snippet ausgeben (empfohlen)</label>
+            <label>Print the stars for Google (structured data)</label>
+            <label lang="de-DE">Sterne für Google ausgeben (strukturierte Daten)</label>
             <defaultValue>true</defaultValue>
-            <helpText>Outputs one LocalBusiness JSON-LD block (with aggregate rating) into the page head, server-side — the SEO path for Google stars, with no client connection to RatingStar. Needs a valid API key. When on, the seal widgets are told not to inject their own client-side JSON-LD, so there is exactly one block per page.</helpText>
-            <helpText lang="de-DE">Gibt einen LocalBusiness-JSON-LD-Block (mit Aggregat-Bewertung) server-seitig in den Seiten-Head aus — der SEO-Weg für die Google-Sterne, ohne Client-Verbindung zu RatingStar. Benötigt einen gültigen API-Key. Ist die Option an, unterdrücken die Siegel-Widgets ihr eigenes Client-JSON-LD, sodass es genau einen Block pro Seite gibt.</helpText>
+            <helpText>The shop server fetches the structured data of your reviews (schema.org, type LocalBusiness) from RatingStar with the API key, caches it and prints it as one block in the page head. There is exactly one block per page; the seals then leave their own output to the server. The block contains an overall rating from the 4-Star plan on and as soon as there are reviews given on RatingStar itself; reviews taken over from other portals do not count. Whether Google shows stars is decided by Google.</helpText>
+            <helpText lang="de-DE">Der Shop-Server holt die strukturierten Daten Ihrer Bewertungen (schema.org, Typ LocalBusiness) mit dem API-Key bei RatingStar ab, speichert sie zwischen und gibt sie als einen Block im Seitenkopf aus. Je Seite gibt es genau einen Block; die Siegel verzichten dann von selbst auf eine eigene Ausgabe. Eine Gesamtbewertung enthält der Block ab dem 4-Star-Tarif und sobald es eigene, auf RatingStar abgegebene Bewertungen gibt; aus anderen Portalen übernommene Bewertungen zählen dafür nicht. Ob Google Sterne anzeigt, entscheidet Google.</helpText>
         </input-field>
     </card>
 
     <card>
-        <title>Privacy &amp; delivery (please read)</title>
-        <title lang="de-DE">Datenschutz &amp; Auslieferung (bitte lesen)</title>
+        <title>Before you go live</title>
+        <title lang="de-DE">Vor dem Livegang</title>
 
-        <input-field type="bool">
-            <name>privacyAcknowledged</name>
-            <label>I have addressed the RatingStar origin in my privacy policy / consent tool</label>
-            <label lang="de-DE">Ich habe die RatingStar-Adresse in Datenschutzerklärung / Consent-Tool berücksichtigt</label>
-            <defaultValue>false</defaultValue>
-            <helpText>seal.js, seal.css, the widget data and the tracking pixel load from the RatingStar origin (a third-party host), so the visitor's browser connects to it. Name the RatingStar origin in your privacy policy and handle it in your consent tool. The server-side rich-snippet (JSON-LD) path needs no client connection. This checkbox is a reminder only.</helpText>
-            <helpText lang="de-DE">seal.js, seal.css, die Widget-Daten und das Tracking-Pixel laden von der RatingStar-Adresse (Dritt-Host) — der Browser des Besuchers verbindet sich also dorthin. Nennen Sie die RatingStar-Adresse in Ihrer Datenschutzerklärung und behandeln Sie sie im Consent-Tool. Der server-seitige Rich-Snippet-Weg (JSON-LD) braucht keine Client-Verbindung. Diese Checkbox ist nur ein Hinweis.</helpText>
-        </input-field>
+        <component name="rs-seal-config-notice">
+            <name>domainNotice</name>
+            <notice>domain</notice>
+        </component>
+
+        <component name="rs-seal-config-notice">
+            <name>privacyNotice</name>
+            <notice>privacy</notice>
+        </component>
     </card>
 </config>

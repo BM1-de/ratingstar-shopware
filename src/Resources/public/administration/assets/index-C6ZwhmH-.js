@@ -1,0 +1,1 @@
+const s='{% block sw_cms_block_rs_seal %} <div class="sw-cms-block-rs-seal"> <slot name="content"> {% block sw_cms_block_rs_seal_slot_content %}{% endblock %} </slot> </div> {% endblock %}',l={template:s};export{l as default};

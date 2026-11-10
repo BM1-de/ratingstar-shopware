@@ -1,0 +1,33 @@
+{% block sw_cms_el_rs_seal %}
+<div class="sw-cms-el-rs-seal">
+    <svg
+        class="sw-cms-el-rs-seal__mark"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 64 64"
+        aria-hidden="true"
+    >
+        <rect
+            width="64"
+            height="64"
+            rx="14"
+            fill="#1A1410"
+        />
+        <path
+            d="M32 11 L37.7 24.9 L52.8 26.4 L41.1 36.0 L44.1 50.8 L32 43.7 L19.9 50.8 L22.9 36.0 L11.2 26.4 L26.3 24.9 Z"
+            fill="#F5A524"
+        />
+    </svg>
+
+    <div class="sw-cms-el-rs-seal__text">
+        <strong class="sw-cms-el-rs-seal__title">
+            {{ $t('rs-seal.element.label') }}: {{ variantLabel }}
+        </strong>
+        <span class="sw-cms-el-rs-seal__subject">{{ subjectLabel }}</span>
+        <span
+            v-if="isStatic"
+            class="sw-cms-el-rs-seal__mode"
+        >{{ $t('rs-seal.element.preview.static') }}</span>
+        <span class="sw-cms-el-rs-seal__note">{{ $t('rs-seal.element.preview.note') }}</span>
+    </div>
+</div>
+{% endblock %}

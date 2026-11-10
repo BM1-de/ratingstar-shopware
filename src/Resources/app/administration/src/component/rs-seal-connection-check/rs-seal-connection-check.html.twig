@@ -1,0 +1,50 @@
+{% block rs_seal_connection_check %}
+<div class="rs-seal-connection-check">
+    {% block rs_seal_connection_check_button %}
+    <mt-button
+        class="rs-seal-connection-check__button"
+        variant="secondary"
+        :is-loading="isLoading"
+        :disabled="isLoading"
+        @click="onCheck"
+    >
+        {{ $t('rs-seal.config.check.button') }}
+    </mt-button>
+    {% endblock %}
+
+    {% block rs_seal_connection_check_hint %}
+    <p class="rs-seal-connection-check__hint">
+        {{ $t('rs-seal.config.check.hint') }}
+    </p>
+    {% endblock %}
+
+    {% block rs_seal_connection_check_results %}
+    <div
+        class="rs-seal-connection-check__results"
+        aria-live="polite"
+    >
+        <mt-banner
+            v-if="hasFailed"
+            variant="critical"
+        >
+            {{ $t('rs-seal.config.check.failed') }}
+        </mt-banner>
+
+        <mt-banner
+            v-else-if="hasChecked && !isLoading && results.length === 0"
+            variant="neutral"
+        >
+            {{ $t('rs-seal.config.check.nothing') }}
+        </mt-banner>
+
+        <mt-banner
+            v-for="result in results"
+            :key="result.key"
+            :variant="result.variant"
+        >
+            {{ result.text }}
+        </mt-banner>
+    </div>
+    {% endblock %}
+</div>
+{% endblock %}

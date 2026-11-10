@@ -1,0 +1,31 @@
+{
+  "base": "/bundles/ratingstarseal/administration/",
+  "entryPoints": {
+    "rating-star-seal": {
+      "css": [
+        "/bundles/ratingstarseal/administration/assets/rating-star-seal-C0WF9NnA.css"
+      ],
+      "dynamic": [
+        "/bundles/ratingstarseal/administration/assets/index-D9Z5vApD.js",
+        "/bundles/ratingstarseal/administration/assets/index-C6ZwhmH-.js",
+        "/bundles/ratingstarseal/administration/assets/index-Sy0ENT3R.js",
+        "/bundles/ratingstarseal/administration/assets/index-FBmfXwud.js",
+        "/bundles/ratingstarseal/administration/assets/index-vuEVAEr6.js"
+      ],
+      "js": [
+        "/bundles/ratingstarseal/administration/assets/rating-star-seal-BKtLkiKP.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

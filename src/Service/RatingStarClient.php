@@ -3,154 +3,225 @@
 namespace RatingStar\Seal\Service;
 
 use Psr\Log\LoggerInterface;
+use Shopware\Core\Framework\Adapter\Cache\CacheInvalidator;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * Fetches RatingStar JSON payloads server-side and caches them per the TTLs in
- * CONTRACT §1. Failures never bubble up — a broken/blocked RatingStar origin
- * must not break the host shop (CONTRACT §2.9): every fetch degrades to null.
+ * Talks to the RatingStar origin server-side. Failures never bubble up: a
+ * slow, blocked or broken origin must not break the shop, so every request
+ * degrades to "no data". The same goes for a cache that fails.
  *
- * All cached items carry the CACHE_TAG so config / key rotation can be flushed
- * in one call (CONTRACT §2.11).
+ * The only payload fetched for the storefront is the finished JSON-LD object
+ * of the key-scoped endpoint. Widget data is never fetched here — rendering
+ * the seal is the job of seal.js.
  */
 class RatingStarClient
 {
+    /** Tags the cached payloads and every HTTP cache entry that shows a seal. */
     public const CACHE_TAG = 'ratingstar-seal';
 
-    /** TTLs in seconds, mirroring the endpoint table in CONTRACT §1. */
-    public const TTL_SLUG_JSON = 60;
-    public const TTL_KEY_JSON = 3600;
-    public const TTL_JSONLD = 21600;
-    public const TTL_REVIEWS = 300;
+    /** JSON-LD is cacheable for 6 hours (endpoint Cache-Control). */
+    private const TTL_JSONLD = 21600;
 
-    private const HTTP_TIMEOUT = 5.0;
+    /** Failures are remembered for 15 minutes so a flaky origin is not hit per page view. */
+    private const TTL_FAILURE = 900;
+
+    /** Symfony's "timeout" is the idle timeout only; "max_duration" caps the whole request. */
+    private const IDLE_TIMEOUT = 3.0;
+    private const MAX_DURATION = 5.0;
+
+    /** No answer of the origin is anywhere near this size. */
+    private const MAX_BODY_BYTES = 2_000_000;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly TagAwareAdapterInterface $cache,
-        private readonly RatingStarConfig $config,
+        private readonly CacheInvalidator $cacheInvalidator,
         private readonly LoggerInterface $logger,
     ) {
     }
 
     /**
-     * Widget/JSON-LD data via the rename-proof, all-tiers-open key endpoint
-     * (CONTRACT §1, §2.1 — the preferred path). Null when no valid key.
+     * The LocalBusiness object of /seal/k/<key>.jsonld, decoded. The app
+     * already applies plan and count rules (a bare LocalBusiness below the
+     * 4-Star plan or without native reviews). Null on any failure or when
+     * the answer is not a LocalBusiness object.
+     *
+     * The cache can fail (pool folder not writable, Redis not reachable or
+     * read-only). Then there is no data and no request: an answer that
+     * cannot be stored would be fetched again for every page that is
+     * rendered. That is why the entry is saved as a remembered failure
+     * before the request — only a cache that takes this very entry gets one.
+     *
+     * @return array<string, mixed>|null
      */
-    public function getSealDataByKey(?string $salesChannelId = null): ?array
+    public function getJsonLd(string $origin, string $apiKey): ?array
     {
-        if (!$this->config->hasValidApiKey($salesChannelId)) {
+        if (!RatingStarConfig::isValidApiKey($apiKey)) {
             return null;
         }
 
-        $key = (string) $this->config->getApiKey($salesChannelId);
+        $url = $origin . '/seal/k/' . rawurlencode($apiKey) . '.jsonld';
 
-        return $this->fetchJson($this->config->url('/seal/k/' . rawurlencode($key) . '.json', $salesChannelId), self::TTL_KEY_JSON);
-    }
+        try {
+            $item = $this->cache->getItem('ratingstar_seal_' . sha1($url));
 
-    /**
-     * Widget data via the slug endpoint (tier-gated, whitelist-enforced).
-     * Fallback when no API key is configured.
-     */
-    public function getSealDataBySlug(?string $salesChannelId = null): ?array
-    {
-        $slug = $this->config->getSlug($salesChannelId);
-        if ($slug === null) {
+            if ($item->isHit()) {
+                $cached = $item->get();
+
+                return \is_array($cached) && $cached !== [] ? $cached : null;
+            }
+
+            // An empty array marks a remembered failure.
+            if (!$this->store($item, [], self::TTL_FAILURE)) {
+                $this->logCacheFailure();
+
+                return null;
+            }
+        } catch (\Throwable $e) {
+            $this->logCacheFailure($e);
+
             return null;
         }
 
-        return $this->fetchJson($this->config->url('/seal/' . rawurlencode($slug) . '.json', $salesChannelId), self::TTL_SLUG_JSON);
-    }
+        $data = $this->requestLocalBusiness($url);
 
-    /** Seal data, preferring the key endpoint and falling back to the slug. */
-    public function getSealData(?string $salesChannelId = null): ?array
-    {
-        return $this->getSealDataByKey($salesChannelId) ?? $this->getSealDataBySlug($salesChannelId);
-    }
-
-    /**
-     * The finished, server-built JSON-LD object via the key-scoped endpoint
-     * (CONTRACT §1 — the recommended path). The app already applies the tier /
-     * count logic: a bare LocalBusiness under 4-Star or count 0, otherwise with
-     * aggregateRating + reviews. We pass it through unchanged (CONTRACT §2.8).
-     * Null when no valid key.
-     */
-    public function getJsonLdByKey(?string $salesChannelId = null): ?array
-    {
-        if (!$this->config->hasValidApiKey($salesChannelId)) {
+        if ($data === null) {
+            // The entry saved above already remembers the failure.
             return null;
         }
 
-        $key = (string) $this->config->getApiKey($salesChannelId);
-
-        return $this->fetchJson($this->config->url('/seal/k/' . rawurlencode($key) . '.jsonld', $salesChannelId), self::TTL_JSONLD);
-    }
-
-    /**
-     * GET a RatingStar JSON resource, cached + tagged. Returns the decoded
-     * array, or null on any transport/HTTP/decoding failure (graceful).
-     */
-    public function fetchJson(string $url, int $ttl): ?array
-    {
-        $item = $this->cache->getItem('ratingstar_seal_' . sha1($url));
-
-        if ($item->isHit()) {
-            $cached = $item->get();
-
-            return \is_array($cached) ? $cached : null;
+        try {
+            if (!$this->store($item, $data, self::TTL_JSONLD)) {
+                $this->logCacheFailure();
+            }
+        } catch (\Throwable $e) {
+            $this->logCacheFailure($e);
         }
-
-        $data = $this->requestJson($url);
-
-        // Cache the result (including a negative null) so a flaky origin is not
-        // hammered once per request; null TTL is kept short.
-        $item->set($data);
-        $item->expiresAfter($data === null ? min($ttl, 60) : $ttl);
-        $item->tag(self::CACHE_TAG);
-        $this->cache->save($item);
 
         return $data;
     }
 
-    private function requestJson(string $url): ?array
+    /**
+     * One uncached GET with a hard time and size limit. Status 0 means no
+     * usable answer at all (DNS, TLS, timeout, oversized body).
+     *
+     * @return array{status: int, body: string}
+     */
+    public function fetch(string $url, string $accept): array
     {
         try {
             $response = $this->httpClient->request('GET', $url, [
-                'timeout' => self::HTTP_TIMEOUT,
-                'headers' => ['Accept' => 'application/json'],
+                'timeout' => self::IDLE_TIMEOUT,
+                'max_duration' => self::MAX_DURATION,
+                'max_redirects' => 2,
+                'headers' => [
+                    'Accept' => $accept,
+                    'User-Agent' => 'RatingStar-Shopware',
+                ],
             ]);
 
             $status = $response->getStatusCode();
+            $body = '';
 
-            // 403 = tier gate / domain whitelist / embed not authorized — expected,
-            // handled by degrading the widget, not an error (CONTRACT §2.9, §2.10).
-            if ($status === 403) {
-                $this->logger->info('RatingStar: 403 for {url} (tier/whitelist) — degrading.', ['url' => $url]);
+            foreach ($this->httpClient->stream($response) as $chunk) {
+                $body .= $chunk->getContent();
 
-                return null;
+                if (\strlen($body) > self::MAX_BODY_BYTES) {
+                    $response->cancel();
+                    $this->logger->warning('RatingStar: answer of {url} is too large, ignored.', ['url' => self::maskKey($url)]);
+
+                    return ['status' => 0, 'body' => ''];
+                }
             }
 
-            if ($status !== 200) {
-                $this->logger->warning('RatingStar: unexpected HTTP {status} for {url}.', ['status' => $status, 'url' => $url]);
-
-                return null;
-            }
-
-            $decoded = json_decode($response->getContent(false), true);
-
-            return \is_array($decoded) ? $decoded : null;
+            return ['status' => $status, 'body' => $body];
         } catch (HttpExceptionInterface $e) {
-            $this->logger->warning('RatingStar: request to {url} failed: {msg}', ['url' => $url, 'msg' => $e->getMessage()]);
+            $this->logger->warning('RatingStar: request to {url} failed: {message}', [
+                'url' => self::maskKey($url),
+                'message' => self::maskKey($e->getMessage()),
+            ]);
 
-            return null;
+            return ['status' => 0, 'body' => ''];
         }
     }
 
-    /** Flush all cached RatingStar payloads (config / key rotation — CONTRACT §2.11). */
+    /**
+     * Flushes the cached payloads and every HTTP cache entry that shows a
+     * seal or the JSON-LD block, so a changed origin, slug or rotated key
+     * takes effect at once.
+     */
     public function clearCache(): void
     {
-        $this->cache->invalidateTags([self::CACHE_TAG]);
+        $this->cacheInvalidator->invalidate([self::CACHE_TAG], true);
+    }
+
+    /** Hides all but the last four characters of an API key in log output. */
+    public static function maskKey(string $text): string
+    {
+        return (string) preg_replace('/rs_live_[A-Za-z0-9]{36}([A-Za-z0-9]{4})/', 'rs_live_…$1', $text);
+    }
+
+    /**
+     * @param array<string, mixed> $value
+     */
+    private function store(CacheItem $item, array $value, int $ttl): bool
+    {
+        $item->set($value);
+        $item->expiresAfter($ttl);
+        $item->tag(self::CACHE_TAG);
+
+        return $this->cache->save($item);
+    }
+
+    /**
+     * Level "error", so the line is also written in the production
+     * environment, where warnings only reach the log together with an error.
+     */
+    private function logCacheFailure(?\Throwable $e = null): void
+    {
+        $this->logger->error(
+            'RatingStar: the cache did not store the JSON-LD entry. Without a working cache there is no JSON-LD block '
+            . '(Google stars) and the RatingStar server is not asked. Check that the cache of the shop is writable.',
+            $e === null ? [] : ['exception' => $e],
+        );
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function requestLocalBusiness(string $url): ?array
+    {
+        $result = $this->fetch($url, 'application/ld+json, application/json');
+
+        if ($result['status'] === 0) {
+            return null;
+        }
+
+        if ($result['status'] !== 200) {
+            // 403 = plan gate or domain whitelist, 404 = unknown key: expected
+            // answers that simply mean "no block".
+            $this->logger->info('RatingStar: HTTP {status} for {url}, no JSON-LD.', [
+                'status' => $result['status'],
+                'url' => self::maskKey($url),
+            ]);
+
+            return null;
+        }
+
+        $decoded = json_decode($result['body'], true);
+
+        if (!\is_array($decoded) || ($decoded['@type'] ?? null) !== 'LocalBusiness') {
+            $this->logger->warning('RatingStar: {url} did not return a LocalBusiness object.', [
+                'url' => self::maskKey($url),
+            ]);
+
+            return null;
+        }
+
+        return $decoded;
     }
 }

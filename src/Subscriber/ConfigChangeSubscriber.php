@@ -4,13 +4,13 @@ namespace RatingStar\Seal\Subscriber;
 
 use RatingStar\Seal\Service\RatingStarClient;
 use RatingStar\Seal\Service\RatingStarConfig;
-use Shopware\Core\System\SystemConfig\Event\SystemConfigChangedEvent;
+use Shopware\Core\System\SystemConfig\Event\SystemConfigMultipleChangedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Flushes the cached RatingStar payloads whenever a plugin setting changes, so
- * a changed base origin / slug / rotated key takes effect immediately
- * (CONTRACT §2.11).
+ * Flushes the cached RatingStar payloads and the pages showing a seal as soon
+ * as a plugin setting is saved, so a changed origin, slug, group or rotated
+ * key takes effect at once.
  */
 class ConfigChangeSubscriber implements EventSubscriberInterface
 {
@@ -21,14 +21,18 @@ class ConfigChangeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            SystemConfigChangedEvent::class => 'onConfigChanged',
+            SystemConfigMultipleChangedEvent::class => 'onConfigChanged',
         ];
     }
 
-    public function onConfigChanged(SystemConfigChangedEvent $event): void
+    public function onConfigChanged(SystemConfigMultipleChangedEvent $event): void
     {
-        if (str_starts_with($event->getKey(), RatingStarConfig::CONFIG_DOMAIN)) {
-            $this->client->clearCache();
+        foreach (array_keys($event->getConfig()) as $key) {
+            if (str_starts_with((string) $key, RatingStarConfig::CONFIG_DOMAIN)) {
+                $this->client->clearCache();
+
+                return;
+            }
         }
     }
 }

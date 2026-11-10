@@ -1,0 +1,288 @@
+{
+    "rs-seal": {
+        "block": {
+            "label": "RatingStar-Siegel"
+        },
+        "variants": {
+            "seal-circle": "Rundsiegel",
+            "seal-circle-banner": "Banderole",
+            "profile-card": "Profil-Karte",
+            "bar": "Bewertungsleiste",
+            "hero": "Gesamtnote",
+            "quote": "Zitat",
+            "carousel": "Karussell",
+            "wall": "Bewertungswand",
+            "footer-bar": "Fußleiste"
+        },
+        "element": {
+            "label": "RatingStar-Siegel",
+            "preview": {
+                "group": "Gruppe: {name}",
+                "slug": "Filiale: {name}",
+                "configured": "Filiale oder Gruppe aus der Plugin-Konfiguration",
+                "static": "Statisches Bild, ohne JavaScript",
+                "note": "Platzhalter. Im Shop zeichnet RatingStar das Siegel."
+            },
+            "config": {
+                "default": "Standard (Portal)",
+                "yes": "Ja",
+                "no": "Nein",
+                "fromPluginConfig": "Aus der Plugin-Konfiguration",
+                "variant": {
+                    "label": "Variante",
+                    "helpText": "Rundsiegel und Banderole laufen in jedem Tarif. Die Live-Widgets von der Profil-Karte bis zur Fußleiste gibt es ab dem 4-Star-Tarif; darunter zeigt RatingStar von selbst die Banderole."
+                },
+                "renderMode": {
+                    "label": "Ausgabe",
+                    "helpText": "Das statische Bild kommt ohne JavaScript aus und verlinkt auf Ihr Profil. Es gibt es nur für Rundsiegel, Banderole und Profil-Karte.",
+                    "values": {
+                        "live": "Live-Siegel (seal.js)",
+                        "static": "Statisches Bild (ohne JavaScript)"
+                    }
+                },
+                "position": {
+                    "label": "Position der Profil-Karte",
+                    "helpText": "„An dieser Stelle“ setzt die Karte in den Inhalt. Die vier Ecken lassen sie am Bildschirmrand schweben.",
+                    "values": {
+                        "inline": "An dieser Stelle",
+                        "bottom-right": "Schwebend unten rechts",
+                        "bottom-left": "Schwebend unten links",
+                        "top-right": "Schwebend oben rechts",
+                        "top-left": "Schwebend oben links"
+                    }
+                },
+                "subject": {
+                    "heading": "Filiale oder Gruppe"
+                },
+                "slug": {
+                    "label": "Filiale (Profil-Slug)",
+                    "helpText": "Nur ausfüllen, wenn dieses Siegel eine andere Filiale zeigen soll als in der Plugin-Konfiguration eingetragen: der Teil nach /t/ in der Adresse des Profils."
+                },
+                "group": {
+                    "label": "Gruppe (Gruppen-Slug)",
+                    "helpText": "Nur ausfüllen, wenn dieses Siegel eine Gruppe über alle ihre Filialen zeigen soll: der Teil nach /g/ in der Adresse des Gruppenprofils. Eine Gruppe hat Vorrang vor der Filiale."
+                },
+                "options": {
+                    "heading": "Darstellung dieser Variante"
+                },
+                "award": {
+                    "label": "Auszeichnung statt Siegel (optional)",
+                    "helpText": "Zeigt das Bild einer Auszeichnung der Filiale statt des Siegels. Format: Typ, Bindestrich, Stufe, wie in der Bildadresse der Auszeichnung in RatingStar. Für Gruppen gibt es keine Auszeichnungen."
+                },
+                "expert": {
+                    "heading": "Für Fortgeschrittene"
+                },
+                "dataAttributes": {
+                    "label": "Zusätzliche data-Attribute",
+                    "helpText": "Weitere Attribute für dieses Siegel, zum Beispiel aus dem Code-Generator in RatingStar kopiert. Sie haben Vorrang vor den Feldern oben. Erlaubt sind nur Namen, die mit data- beginnen; Profil, Gruppe, Variante und Position stellen Sie in den eigenen Feldern ein."
+                },
+                "google": {
+                    "heading": "Sterne für Google"
+                },
+                "apiKey": {
+                    "label": "API-Key für diese Seite",
+                    "helpText": "Nur ausfüllen, wenn diese Seite für eine andere Filiale oder Gruppe steht als der übrige Shop, zum Beispiel eine Standortseite. Die Seite erhält dann die strukturierten Daten dieses Schlüssels statt der des Shops. Je Seite gibt es immer nur einen Block."
+                },
+                "noRichSnippet": {
+                    "label": "Strukturierte Daten durch das Siegel",
+                    "helpText": "Gibt der Shop die Sterne für Google selbst aus, verzichtet das Siegel von selbst auf eine eigene Ausgabe. Wählen Sie „Nie“, wenn die Seite schon auf anderem Weg strukturierte Bewertungsdaten enthält.",
+                    "values": {
+                        "auto": "Automatisch",
+                        "suppress": "Nie"
+                    }
+                }
+            }
+        },
+        "options": {
+            "size": {
+                "label": "Größe in Pixel"
+            },
+            "pcWidth": {
+                "label": "Breite in Pixel"
+            },
+            "pcShowCount": {
+                "label": "Anzahl der Bewertungen zeigen"
+            },
+            "pcColor": {
+                "label": "Kartenfarbe",
+                "values": {
+                    "gold": "Gold (creme)",
+                    "silber": "Silber (grau)",
+                    "weiss": "Weiß"
+                }
+            },
+            "pcMobile": {
+                "label": "Schwebende Karte auf dem Smartphone",
+                "helpText": "Gilt unter 640 Pixel Bildschirmbreite und nur für die schwebende Karte.",
+                "values": {
+                    "compact": "Schmale Pille",
+                    "hide": "Ausblenden",
+                    "full": "Karte unverändert"
+                }
+            },
+            "pcClick": {
+                "label": "Klick auf die Karte",
+                "values": {
+                    "overlay": "Bewertungs-Vorschau auf der Seite öffnen",
+                    "profile": "Direkt zum Profil"
+                }
+            },
+            "barShowCount": {
+                "label": "Anzahl der Bewertungen zeigen"
+            },
+            "barShowVerified": {
+                "label": "Hinweis „Verifiziert“ zeigen",
+                "helpText": "Der Hinweis erscheint nur, wenn alle gezählten Bewertungen bestätigt sind. Er lässt sich hier ausblenden, nicht erzwingen."
+            },
+            "heroShowCount": {
+                "label": "Anzahl der Bewertungen zeigen"
+            },
+            "heroShowVerified": {
+                "label": "Hinweis „Verifiziert“ zeigen",
+                "helpText": "Der Hinweis erscheint nur, wenn alle gezählten Bewertungen bestätigt sind. Er lässt sich hier ausblenden, nicht erzwingen."
+            },
+            "heroShowBranches": {
+                "label": "Note je Filiale zeigen",
+                "helpText": "Wirkt nur bei einem Gruppen-Siegel."
+            },
+            "quotePick": {
+                "label": "Auswahl des Zitats",
+                "values": {
+                    "best": "Beste Bewertung",
+                    "newest": "Neueste Bewertung",
+                    "rotate": "Wechselnd",
+                    "manual": "In RatingStar ausgewählt"
+                }
+            },
+            "quoteWidth": {
+                "label": "Breite",
+                "values": {
+                    "s": "Schmal",
+                    "m": "Mittel",
+                    "l": "Breit",
+                    "full": "Volle Breite"
+                }
+            },
+            "carCount": {
+                "label": "Anzahl der Bewertungen"
+            },
+            "carRotate": {
+                "label": "Wechsel in Sekunden",
+                "helpText": "0 schaltet den automatischen Wechsel ab."
+            },
+            "carMin": {
+                "label": "Mindestens so viele Sterne"
+            },
+            "carWidth": {
+                "label": "Breite",
+                "values": {
+                    "s": "Schmal",
+                    "m": "Mittel",
+                    "l": "Breit",
+                    "full": "Volle Breite"
+                }
+            },
+            "wallCols": {
+                "label": "Spalten"
+            },
+            "wallTotal": {
+                "label": "Anzahl der Bewertungen"
+            },
+            "wallMin": {
+                "label": "Mindestens so viele Sterne"
+            },
+            "wallSort": {
+                "label": "Reihenfolge",
+                "values": {
+                    "newest": "Neueste zuerst",
+                    "best": "Beste zuerst",
+                    "mix": "Gemischt"
+                }
+            },
+            "wallWidth": {
+                "label": "Breite",
+                "values": {
+                    "m": "Mittel",
+                    "l": "Breit",
+                    "xl": "Sehr breit",
+                    "full": "Volle Breite"
+                }
+            },
+            "footerBarPosition": {
+                "label": "Position",
+                "values": {
+                    "fixed": "Am unteren Bildschirmrand fixiert",
+                    "inline": "An dieser Stelle im Seitenfluss"
+                }
+            },
+            "footerBarBg": {
+                "label": "Hintergrundfarbe"
+            },
+            "footerBarText": {
+                "label": "Schriftfarbe"
+            },
+            "footerBarLinkColor": {
+                "label": "Linkfarbe"
+            },
+            "footerBarLinkHover": {
+                "label": "Linkfarbe beim Überfahren"
+            },
+            "reviewsOnlyNamed": {
+                "label": "Nur Bewertungen mit Namen"
+            },
+            "reviewsOnlyWithComment": {
+                "label": "Nur Bewertungen mit Text"
+            },
+            "theme": {
+                "label": "Helle oder dunkle Fassung",
+                "helpText": "Die dunkle Fassung passt das Widget an dunkle Seitenhintergründe an.",
+                "values": {
+                    "light": "Hell",
+                    "dark": "Dunkel"
+                }
+            }
+        },
+        "config": {
+            "check": {
+                "button": "Verbindung prüfen",
+                "hint": "Prüft Filiale, Gruppe und API-Key aus dem Formular am RatingStar-Server. Die Prüfung speichert nichts; speichern können Sie unabhängig vom Ergebnis.",
+                "failed": "Die Prüfung ließ sich nicht ausführen. Bitte laden Sie die Seite neu und versuchen Sie es noch einmal.",
+                "nothing": "Es gibt noch nichts zu prüfen: Tragen Sie eine Filiale, eine Gruppe oder einen API-Key ein.",
+                "origin": {
+                    "invalid": "Die Adresse des RatingStar-Servers ist keine gültige Adresse. Sie muss mit https:// oder http:// beginnen."
+                },
+                "slug": {
+                    "found": "Filiale gefunden: „{name}“.",
+                    "not_found": "Zu diesem Profil-Slug gibt es bei RatingStar kein Profil. Bitte prüfen Sie die Schreibweise.",
+                    "invalid": "Der Profil-Slug enthält Zeichen, die in einer Profil-Adresse nicht vorkommen. Tragen Sie nur den Teil nach /t/ ein.",
+                    "http_error": "Das Profil ließ sich nicht abrufen (HTTP {status}). Bitte prüfen Sie den Profil-Slug und die Adresse des RatingStar-Servers.",
+                    "unreachable": "Der RatingStar-Server hat nicht geantwortet. Bitte prüfen Sie die Adresse des Servers und versuchen Sie es später noch einmal."
+                },
+                "group": {
+                    "found": "Gruppe gefunden: „{name}“.",
+                    "not_found": "Zu diesem Gruppen-Slug gibt es bei RatingStar keine Gruppe. Bitte prüfen Sie die Schreibweise.",
+                    "invalid": "Der Gruppen-Slug enthält Zeichen, die in einer Gruppen-Adresse nicht vorkommen. Tragen Sie nur den Teil nach /g/ ein.",
+                    "http_error": "Die Gruppe ließ sich nicht abrufen (HTTP {status}). Bitte prüfen Sie den Gruppen-Slug und die Adresse des RatingStar-Servers.",
+                    "unreachable": "Der RatingStar-Server hat nicht geantwortet. Bitte prüfen Sie die Adresse des Servers und versuchen Sie es später noch einmal."
+                },
+                "apiKey": {
+                    "found": "API-Key bestätigt, er gehört zu „{name}“.",
+                    "not_found": "Diesen API-Key kennt RatingStar nicht. Wurde der Schlüssel in RatingStar neu erzeugt, gilt nur noch der neue.",
+                    "invalid": "Der API-Key hat nicht die erwartete Form: rs_live_ gefolgt von 40 Buchstaben oder Ziffern.",
+                    "http_error": "Mit diesem API-Key ließen sich keine Daten abrufen (HTTP {status}). Bitte prüfen Sie den Schlüssel und die Adresse des RatingStar-Servers.",
+                    "unreachable": "Der RatingStar-Server hat nicht geantwortet. Bitte prüfen Sie die Adresse des Servers und versuchen Sie es später noch einmal."
+                }
+            },
+            "notice": {
+                "domain": {
+                    "title": "Domain freigeben",
+                    "text": "Für die Live-Siegel: Tragen Sie die Domain dieses Shops in RatingStar unter „Siegel & Widgets → Domains & Statistik“ im Abschnitt „Freigegebene Domains“ ein und bestätigen Sie sie mit dem DNS-Eintrag TXT _ratingstar.ihre-domain.de. Sobald dort erstmals eine Domain bestätigt ist, liefert RatingStar die Siegel-Daten nur noch an bestätigte Domains; auf anderen bleibt das Siegel leer. Für ein Gruppen-Siegel gilt die eigene Liste im Backend der Gruppe, ebenfalls unter „Siegel & Widgets → Domains & Statistik“. Die Sterne für Google holt der Shop-Server mit dem API-Key ab; das ist von der Freigabe nicht betroffen und in jedem Tarif möglich."
+                },
+                "privacy": {
+                    "title": "Datenschutz und Einwilligung",
+                    "text": "Die Live-Siegel laden seal.js, seal.css, die Bewertungsdaten und ein Zählpixel vom RatingStar-Server (Standard: ratingstar.de). Der Browser Ihrer Besucher baut dafür eine Verbindung zu diesem Server auf. Nennen Sie ihn in Ihrer Datenschutzerklärung und berücksichtigen Sie ihn in Ihrem Consent-Tool. Die Sterne für Google holt dagegen Ihr Shop-Server ab: Dafür entsteht keine Verbindung vom Browser zu RatingStar. Das statische Bild lädt nur eine Bilddatei."
+                }
+            }
+        }
+    }
+}

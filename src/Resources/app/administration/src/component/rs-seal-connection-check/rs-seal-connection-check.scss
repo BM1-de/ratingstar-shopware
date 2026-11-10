@@ -1,0 +1,12 @@
+.rs-seal-connection-check {
+    margin-bottom: 8px;
+
+    &__hint {
+        margin: 12px 0 16px;
+        color: var(--color-text-secondary-default);
+    }
+
+    &__results .mt-banner {
+        margin-bottom: 12px;
+    }
+}

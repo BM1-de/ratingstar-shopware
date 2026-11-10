@@ -2,56 +2,71 @@
 
 namespace RatingStar\Seal\Service;
 
+use Shopware\Core\Framework\Adapter\Cache\Event\AddCacheTagEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+
 /**
- * Emits the server-side rich snippet: exactly one
- * <script type="application/ld+json"> with the finished LocalBusiness object
- * fetched from the key-scoped endpoint (CONTRACT §2.6–2.8).
+ * Prints the server-side rich snippet: one
+ * <script type="application/ld+json"> with the LocalBusiness object of the
+ * key-scoped endpoint. It needs no connection from the visitor's browser to
+ * RatingStar.
  *
- * The object is passed through unchanged — the app already decides bare
- * LocalBusiness vs. aggregateRating by tier/count, so we never invent ratings
- * or emit a null rating. We only refuse to render anything that is not a
- * well-formed LocalBusiness.
+ * The remote answer never reaches the page as raw text: it is decoded,
+ * checked for "@type": "LocalBusiness" and encoded again with the JSON_HEX_*
+ * flags, so a company name or review text containing "</script>" cannot end
+ * the block. The content itself is passed through unchanged — plan and count
+ * rules are applied by the app.
  *
- * Request-scoped: $rendered guarantees a single block per page (CONTRACT §2.7).
+ * "One block per page" follows from the single call in the head template;
+ * the renderer keeps no state between calls.
  */
 class JsonLdRenderer
 {
-    private const JSON_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-        | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
-
-    private bool $rendered = false;
+    private const JSON_FLAGS = \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE
+        | \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT;
 
     public function __construct(
         private readonly RatingStarClient $client,
         private readonly RatingStarConfig $config,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
-    public function render(?string $salesChannelId = null): string
+    /**
+     * @param string|null $apiKey key of the branch or group this page stands
+     *                            for; null or malformed = configured key
+     */
+    public function render(?string $salesChannelId = null, ?string $apiKey = null): string
     {
-        if ($this->rendered || !$this->config->isServerJsonLdActive($salesChannelId)) {
+        // Tags the HTTP cache entry of this page, so it is purged together
+        // with the cached payload when a setting changes — also while the
+        // block is switched off or no key is configured yet.
+        $this->dispatcher->dispatch(new AddCacheTagEvent(RatingStarClient::CACHE_TAG));
+
+        if (!$this->config->isServerRichSnippetEnabled($salesChannelId)) {
             return '';
         }
 
-        $data = $this->client->getJsonLdByKey($salesChannelId);
+        $apiKey = trim((string) $apiKey);
+        $key = RatingStarConfig::isValidApiKey($apiKey) ? $apiKey : $this->config->getApiKey($salesChannelId);
 
-        // Only emit a well-formed LocalBusiness. Anything else (null, 403,
-        // unexpected shape) yields nothing rather than broken markup.
-        if (!\is_array($data) || ($data['@type'] ?? null) !== 'LocalBusiness') {
+        if ($key === null) {
+            return '';
+        }
+
+        $data = $this->client->getJsonLd($this->config->getBaseOrigin($salesChannelId), $key);
+
+        if ($data === null || ($data['@type'] ?? null) !== 'LocalBusiness') {
             return '';
         }
 
         $json = json_encode($data, self::JSON_FLAGS);
+
         if ($json === false) {
             return '';
         }
 
-        $this->rendered = true;
-
-        // JSON_HEX_TAG already neutralises </script>; the data-rs-jsonld marker
-        // also makes seal.js skip its own client injection (its H() guard).
-        $owner = htmlspecialchars((string) ($this->config->getSlug($salesChannelId) ?? '1'), ENT_QUOTES, 'UTF-8');
-
-        return '<script type="application/ld+json" data-rs-jsonld="' . $owner . '">' . $json . '</script>';
+        // seal.js skips its own client-side block when it finds data-rs-jsonld.
+        return '<script type="application/ld+json" data-rs-jsonld="1">' . $json . '</script>';
     }
 }

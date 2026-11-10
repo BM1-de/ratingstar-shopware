@@ -5,64 +5,84 @@ namespace RatingStar\Seal\Service;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 /**
- * Reads the plugin's system configuration and builds every RatingStar URL from
- * the single configurable base origin (CONTRACT §2.2 — no host hardcoded).
+ * Reads the plugin's system configuration (per sales channel, inheriting the
+ * global value) and builds every RatingStar URL from the one configurable
+ * base origin — no host is hardcoded anywhere else.
  *
- * The two independent handles per sales channel (CONTRACT §2.1):
- *   - slug    → the /t/<slug> handle, drives the slug-based endpoints
- *   - apiKey  → "rs_live_" + 40 alnum, drives the rename-proof key endpoints
+ * Handles per sales channel:
+ *   - slug    the /t/<slug> handle of a branch profile
+ *   - group   the /g/<group> handle of a group; wins over the slug
+ *   - apiKey  "rs_live_" + 40 alphanumeric characters, of the branch or the
+ *             group; drives the key-scoped JSON-LD endpoint
  */
 class RatingStarConfig
 {
     public const CONFIG_DOMAIN = 'RatingStarSeal.config.';
     public const DEFAULT_ORIGIN = 'https://ratingstar.de';
 
-    /** rs_live_ + exactly 40 alphanumeric characters (48 total). */
+    /** rs_live_ + exactly 40 alphanumeric characters (48 in total). */
     private const KEY_PATTERN = '/^rs_live_[A-Za-z0-9]{40}$/';
+
+    /** Profile and group slugs: URL-safe characters only. */
+    private const HANDLE_PATTERN = '/^[A-Za-z0-9][A-Za-z0-9._-]*$/';
 
     public function __construct(private readonly SystemConfigService $systemConfig)
     {
     }
 
     /**
-     * Base origin without trailing slash. Every other URL is derived from this
-     * so a staging / self-hosted instance works by changing this one setting.
+     * Base origin (scheme://host[:port]) without a trailing slash. Anything
+     * that is not an http(s) URL falls back to the default origin.
      */
     public function getBaseOrigin(?string $salesChannelId = null): string
     {
-        $value = trim((string) $this->systemConfig->get(self::CONFIG_DOMAIN . 'baseOrigin', $salesChannelId));
-
-        if ($value === '') {
-            $value = self::DEFAULT_ORIGIN;
-        }
-
-        return rtrim($value, '/');
+        return self::normalizeOrigin($this->getString('baseOrigin', $salesChannelId)) ?? self::DEFAULT_ORIGIN;
     }
 
     public function getSlug(?string $salesChannelId = null): ?string
     {
-        $slug = trim((string) $this->systemConfig->get(self::CONFIG_DOMAIN . 'slug', $salesChannelId));
-
-        return $slug !== '' ? $slug : null;
+        return self::cleanHandle($this->getString('slug', $salesChannelId));
     }
 
-    public function getApiKey(?string $salesChannelId = null): ?string
+    public function getGroup(?string $salesChannelId = null): ?string
     {
-        $key = trim((string) $this->systemConfig->get(self::CONFIG_DOMAIN . 'apiKey', $salesChannelId));
-
-        return $key !== '' ? $key : null;
+        return self::cleanHandle($this->getString('group', $salesChannelId));
     }
 
     /**
-     * True when the configured key matches the rs_live_<40> form. The key
-     * endpoints (rename-proof, all tiers open) must only be hit with a
-     * well-formed key — never pass free text (CONTRACT §2.1).
+     * The configured API key, or null when it is empty or does not have the
+     * rs_live_<40> form. The key endpoints are never called with free text.
      */
-    public function hasValidApiKey(?string $salesChannelId = null): bool
+    public function getApiKey(?string $salesChannelId = null): ?string
     {
-        $key = $this->getApiKey($salesChannelId);
+        $key = $this->getString('apiKey', $salesChannelId);
 
-        return $key !== null && preg_match(self::KEY_PATTERN, $key) === 1;
+        return self::isValidApiKey($key) ? $key : null;
+    }
+
+    /** Whether the server-side rich snippet is switched on (default: on). */
+    public function isServerRichSnippetEnabled(?string $salesChannelId = null): bool
+    {
+        $value = $this->systemConfig->get(self::CONFIG_DOMAIN . 'serverRichSnippet', $salesChannelId);
+
+        // Shopware returns null for a bool that was never saved.
+        return $value === null ? true : (bool) $value;
+    }
+
+    /**
+     * True when the plugin prints its own JSON-LD block for this sales
+     * channel: the option is on and a well-formed key is configured. Seals
+     * then carry data-no-richsnippet="1" so seal.js adds no second block.
+     */
+    public function isServerJsonLdActive(?string $salesChannelId = null): bool
+    {
+        return $this->isServerRichSnippetEnabled($salesChannelId) && $this->getApiKey($salesChannelId) !== null;
+    }
+
+    /** Absolute RatingStar URL for a path such as "/seal.js". */
+    public function url(string $path, ?string $salesChannelId = null): string
+    {
+        return $this->getBaseOrigin($salesChannelId) . '/' . ltrim($path, '/');
     }
 
     public static function isValidApiKey(string $key): bool
@@ -70,40 +90,43 @@ class RatingStarConfig
         return preg_match(self::KEY_PATTERN, $key) === 1;
     }
 
-    /** Whether at least one usable handle (slug or valid key) is configured. */
-    public function isConfigured(?string $salesChannelId = null): bool
+    /** The trimmed slug if it only holds URL-safe characters, otherwise null. */
+    public static function cleanHandle(?string $handle): ?string
     {
-        return $this->getSlug($salesChannelId) !== null || $this->hasValidApiKey($salesChannelId);
+        $handle = trim((string) $handle);
+
+        return preg_match(self::HANDLE_PATTERN, $handle) === 1 ? $handle : null;
     }
 
     /**
-     * Whether the admin opted into the server-side rich snippet (default on).
-     * This is the recommended SEO path (CONTRACT §2.6) and needs no client
-     * connection to the RatingStar origin.
+     * Reduces a configured URL to its origin. Returns null for anything that
+     * is not an http(s) URL with a host, so callers can fall back.
      */
-    public function isServerRichSnippetEnabled(?string $salesChannelId = null): bool
+    public static function normalizeOrigin(?string $origin): ?string
     {
-        $value = $this->systemConfig->get(self::CONFIG_DOMAIN . 'serverRichSnippet', $salesChannelId);
+        $parts = parse_url(trim((string) $origin));
 
-        // Unset → default on. Shopware returns null for an untouched bool.
-        return $value === null ? true : (bool) $value;
+        if (!\is_array($parts) || !isset($parts['host']) || $parts['host'] === '') {
+            return null;
+        }
+
+        $scheme = strtolower($parts['scheme'] ?? '');
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return null;
+        }
+
+        // Only host characters may reach the markup built from this value.
+        if (preg_match('/^[A-Za-z0-9.\-\[\]:]+$/', $parts['host']) !== 1) {
+            return null;
+        }
+
+        return $scheme . '://' . strtolower($parts['host']) . (isset($parts['port']) ? ':' . $parts['port'] : '');
     }
 
-    /**
-     * True when this plugin will actually emit a server-side JSON-LD block:
-     * the option is on and a valid key exists (the .jsonld endpoint is
-     * key-scoped). Used to decide whether widgets must carry
-     * data-no-richsnippet="1" so seal.js suppresses its client injection
-     * (CONTRACT §2.7).
-     */
-    public function isServerJsonLdActive(?string $salesChannelId = null): bool
+    private function getString(string $key, ?string $salesChannelId): string
     {
-        return $this->isServerRichSnippetEnabled($salesChannelId) && $this->hasValidApiKey($salesChannelId);
-    }
+        $value = $this->systemConfig->get(self::CONFIG_DOMAIN . $key, $salesChannelId);
 
-    /** Build an absolute RatingStar URL from a path ("/seal.js", "/seal/k/<key>.json", …). */
-    public function url(string $path, ?string $salesChannelId = null): string
-    {
-        return $this->getBaseOrigin($salesChannelId) . '/' . ltrim($path, '/');
+        return \is_scalar($value) ? trim((string) $value) : '';
     }
 }

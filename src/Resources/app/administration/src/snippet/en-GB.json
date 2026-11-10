@@ -1,0 +1,288 @@
+{
+    "rs-seal": {
+        "block": {
+            "label": "RatingStar seal"
+        },
+        "variants": {
+            "seal-circle": "Round seal",
+            "seal-circle-banner": "Banner seal",
+            "profile-card": "Profile card",
+            "bar": "Rating bar",
+            "hero": "Overall rating",
+            "quote": "Quote",
+            "carousel": "Carousel",
+            "wall": "Review wall",
+            "footer-bar": "Footer bar"
+        },
+        "element": {
+            "label": "RatingStar seal",
+            "preview": {
+                "group": "Group: {name}",
+                "slug": "Branch: {name}",
+                "configured": "Branch or group from the plugin configuration",
+                "static": "Static image, no JavaScript",
+                "note": "Placeholder. In the shop RatingStar draws the seal."
+            },
+            "config": {
+                "default": "Default (portal)",
+                "yes": "Yes",
+                "no": "No",
+                "fromPluginConfig": "From the plugin configuration",
+                "variant": {
+                    "label": "Variant",
+                    "helpText": "Round seal and banner seal work on every plan. The live widgets from the profile card to the footer bar are available from the 4-Star plan; below that RatingStar shows the banner seal instead."
+                },
+                "renderMode": {
+                    "label": "Output",
+                    "helpText": "The static image needs no JavaScript and links to your profile. It exists for the round seal, the banner seal and the profile card only.",
+                    "values": {
+                        "live": "Live seal (seal.js)",
+                        "static": "Static image (no JavaScript)"
+                    }
+                },
+                "position": {
+                    "label": "Position of the profile card",
+                    "helpText": "\"At this place\" puts the card into the content. The four corners make it float at the edge of the screen.",
+                    "values": {
+                        "inline": "At this place",
+                        "bottom-right": "Floating bottom right",
+                        "bottom-left": "Floating bottom left",
+                        "top-right": "Floating top right",
+                        "top-left": "Floating top left"
+                    }
+                },
+                "subject": {
+                    "heading": "Branch or group"
+                },
+                "slug": {
+                    "label": "Branch (profile slug)",
+                    "helpText": "Fill in only if this seal should show a different branch than the one in the plugin configuration: the part after /t/ in the address of the profile."
+                },
+                "group": {
+                    "label": "Group (group slug)",
+                    "helpText": "Fill in only if this seal should show a group across all its branches: the part after /g/ in the address of the group profile. A group takes precedence over the branch."
+                },
+                "options": {
+                    "heading": "Appearance of this variant"
+                },
+                "award": {
+                    "label": "Award instead of the seal (optional)",
+                    "helpText": "Shows the image of an award of the branch instead of the seal. Format: type, hyphen, level, as in the image address of the award in RatingStar. Groups have no awards."
+                },
+                "expert": {
+                    "heading": "Advanced"
+                },
+                "dataAttributes": {
+                    "label": "Additional data attributes",
+                    "helpText": "Further attributes for this seal, for example copied from the code generator in RatingStar. They take precedence over the fields above. Only names starting with data- are allowed; profile, group, variant and position have their own fields."
+                },
+                "google": {
+                    "heading": "Stars for Google"
+                },
+                "apiKey": {
+                    "label": "API key for this page",
+                    "helpText": "Fill in only if this page stands for a different branch or group than the rest of the shop, for example a location page. The page then gets the structured data of this key instead of the shop's. There is only ever one block per page."
+                },
+                "noRichSnippet": {
+                    "label": "Structured data by the seal",
+                    "helpText": "If the shop prints the stars for Google itself, the seal leaves out its own output automatically. Choose \"Never\" if the page already carries structured review data by other means.",
+                    "values": {
+                        "auto": "Automatic",
+                        "suppress": "Never"
+                    }
+                }
+            }
+        },
+        "options": {
+            "size": {
+                "label": "Size in pixels"
+            },
+            "pcWidth": {
+                "label": "Width in pixels"
+            },
+            "pcShowCount": {
+                "label": "Show the number of reviews"
+            },
+            "pcColor": {
+                "label": "Card colour",
+                "values": {
+                    "gold": "Gold (cream)",
+                    "silber": "Silver (grey)",
+                    "weiss": "White"
+                }
+            },
+            "pcMobile": {
+                "label": "Floating card on smartphones",
+                "helpText": "Applies below a screen width of 640 pixels and to the floating card only.",
+                "values": {
+                    "compact": "Narrow pill",
+                    "hide": "Hide",
+                    "full": "Card unchanged"
+                }
+            },
+            "pcClick": {
+                "label": "Click on the card",
+                "values": {
+                    "overlay": "Open the review preview on the page",
+                    "profile": "Go straight to the profile"
+                }
+            },
+            "barShowCount": {
+                "label": "Show the number of reviews"
+            },
+            "barShowVerified": {
+                "label": "Show the \"Verified\" note",
+                "helpText": "The note only appears when all counted reviews are confirmed. It can be hidden here, not forced."
+            },
+            "heroShowCount": {
+                "label": "Show the number of reviews"
+            },
+            "heroShowVerified": {
+                "label": "Show the \"Verified\" note",
+                "helpText": "The note only appears when all counted reviews are confirmed. It can be hidden here, not forced."
+            },
+            "heroShowBranches": {
+                "label": "Show the rating of each branch",
+                "helpText": "Only has an effect on a group seal."
+            },
+            "quotePick": {
+                "label": "Choice of the quote",
+                "values": {
+                    "best": "Best review",
+                    "newest": "Newest review",
+                    "rotate": "Rotating",
+                    "manual": "Chosen in RatingStar"
+                }
+            },
+            "quoteWidth": {
+                "label": "Width",
+                "values": {
+                    "s": "Narrow",
+                    "m": "Medium",
+                    "l": "Wide",
+                    "full": "Full width"
+                }
+            },
+            "carCount": {
+                "label": "Number of reviews"
+            },
+            "carRotate": {
+                "label": "Rotation in seconds",
+                "helpText": "0 switches the automatic rotation off."
+            },
+            "carMin": {
+                "label": "At least this many stars"
+            },
+            "carWidth": {
+                "label": "Width",
+                "values": {
+                    "s": "Narrow",
+                    "m": "Medium",
+                    "l": "Wide",
+                    "full": "Full width"
+                }
+            },
+            "wallCols": {
+                "label": "Columns"
+            },
+            "wallTotal": {
+                "label": "Number of reviews"
+            },
+            "wallMin": {
+                "label": "At least this many stars"
+            },
+            "wallSort": {
+                "label": "Order",
+                "values": {
+                    "newest": "Newest first",
+                    "best": "Best first",
+                    "mix": "Mixed"
+                }
+            },
+            "wallWidth": {
+                "label": "Width",
+                "values": {
+                    "m": "Medium",
+                    "l": "Wide",
+                    "xl": "Very wide",
+                    "full": "Full width"
+                }
+            },
+            "footerBarPosition": {
+                "label": "Position",
+                "values": {
+                    "fixed": "Fixed to the bottom of the screen",
+                    "inline": "At this place in the page flow"
+                }
+            },
+            "footerBarBg": {
+                "label": "Background colour"
+            },
+            "footerBarText": {
+                "label": "Text colour"
+            },
+            "footerBarLinkColor": {
+                "label": "Link colour"
+            },
+            "footerBarLinkHover": {
+                "label": "Link colour on hover"
+            },
+            "reviewsOnlyNamed": {
+                "label": "Only reviews with a name"
+            },
+            "reviewsOnlyWithComment": {
+                "label": "Only reviews with text"
+            },
+            "theme": {
+                "label": "Light or dark version",
+                "helpText": "The dark version adapts the widget to dark page backgrounds.",
+                "values": {
+                    "light": "Light",
+                    "dark": "Dark"
+                }
+            }
+        },
+        "config": {
+            "check": {
+                "button": "Check connection",
+                "hint": "Checks branch, group and API key from the form against the RatingStar server. The check saves nothing; you can save whatever the result is.",
+                "failed": "The check could not be run. Please reload the page and try again.",
+                "nothing": "There is nothing to check yet: enter a branch, a group or an API key.",
+                "origin": {
+                    "invalid": "The address of the RatingStar server is not a valid address. It has to start with https:// or http://."
+                },
+                "slug": {
+                    "found": "Branch found: \"{name}\".",
+                    "not_found": "RatingStar has no profile for this profile slug. Please check the spelling.",
+                    "invalid": "The profile slug contains characters that do not occur in a profile address. Enter only the part after /t/.",
+                    "http_error": "The profile could not be fetched (HTTP {status}). Please check the profile slug and the address of the RatingStar server.",
+                    "unreachable": "The RatingStar server did not answer. Please check the address of the server and try again later."
+                },
+                "group": {
+                    "found": "Group found: \"{name}\".",
+                    "not_found": "RatingStar has no group for this group slug. Please check the spelling.",
+                    "invalid": "The group slug contains characters that do not occur in a group address. Enter only the part after /g/.",
+                    "http_error": "The group could not be fetched (HTTP {status}). Please check the group slug and the address of the RatingStar server.",
+                    "unreachable": "The RatingStar server did not answer. Please check the address of the server and try again later."
+                },
+                "apiKey": {
+                    "found": "API key confirmed, it belongs to \"{name}\".",
+                    "not_found": "RatingStar does not know this API key. If the key was regenerated in RatingStar, only the new one is valid.",
+                    "invalid": "The API key does not have the expected form: rs_live_ followed by 40 letters or digits.",
+                    "http_error": "No data could be fetched with this API key (HTTP {status}). Please check the key and the address of the RatingStar server.",
+                    "unreachable": "The RatingStar server did not answer. Please check the address of the server and try again later."
+                }
+            },
+            "notice": {
+                "domain": {
+                    "title": "Approve your domain",
+                    "text": "For the live seals: enter the domain of this shop in RatingStar under \"Siegel & Widgets → Domains & Statistik\", section \"Freigegebene Domains\", and confirm it with the DNS record TXT _ratingstar.your-domain.com. As soon as a first domain is confirmed there, RatingStar delivers the seal data to confirmed domains only; on others the seal stays empty. A group seal has its own list in the backend of the group, also under \"Siegel & Widgets → Domains & Statistik\". The shop server fetches the stars for Google with the API key; that is not affected by the approval and possible on every plan."
+                },
+                "privacy": {
+                    "title": "Privacy and consent",
+                    "text": "The live seals load seal.js, seal.css, the review data and a counting pixel from the RatingStar server (default: ratingstar.de). The browser of your visitors connects to that server for this. Name it in your privacy policy and take it into account in your consent tool. The stars for Google, by contrast, are fetched by your shop server: no connection from the browser to RatingStar is made for them. The static image loads a single image file only."
+                }
+            }
+        }
+    }
+}

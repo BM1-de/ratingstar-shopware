@@ -1,9 +1,15 @@
 {
     "name": "ratingstar/shopware-seal",
-    "description": "RatingStar-Siegel und Google-Sterne (Rich Snippets) für Shopware 6.",
+    "description": "RatingStar review seals, widgets and the stars for Google (rich snippets) for Shopware 6.",
     "type": "shopware-platform-plugin",
-    "license": "proprietary",
-    "version": "0.1.0",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Baumgärtner Marketing GmbH",
+            "homepage": "https://bm1.de"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "RatingStar\\Seal\\": "src/"
@@ -11,16 +17,27 @@
     },
     "extra": {
         "shopware-plugin-class": "RatingStar\\Seal\\RatingStarSeal",
+        "plugin-icon": "src/Resources/config/plugin.png",
+        "copyright": "(c) Baumgärtner Marketing GmbH",
         "label": {
             "de-DE": "RatingStar Siegel & Google-Sterne",
             "en-GB": "RatingStar seal & Google stars"
         },
         "description": {
-            "de-DE": "RatingStar-Siegel und Google-Sterne (Rich Snippets) einbinden.",
-            "en-GB": "Embed the RatingStar seal and Google stars (rich snippets)."
+            "de-DE": "RatingStar ist das Bewertungstool für Unternehmen: Kundenbewertungen sammeln, Bewertungen aus Google und anderen Portalen bündeln und alles mit Siegeln auf der eigenen Website zeigen. Dieses Plugin bringt die Siegel und Widgets als Erlebniswelt-Element in Ihren Shop und gibt die Sterne für Google serverseitig aus.",
+            "en-GB": "RatingStar is the review tool for businesses: collect customer reviews, bundle reviews from Google and other portals and show them all with seals on your own website. This plugin brings the seals and widgets into your shop as a shopping experience element and prints the stars for Google server-side."
+        },
+        "manufacturerLink": {
+            "de-DE": "https://ratingstar.de",
+            "en-GB": "https://ratingstar.de"
+        },
+        "supportLink": {
+            "de-DE": "https://ratingstar.de/support",
+            "en-GB": "https://ratingstar.de/support"
         }
     },
     "require": {
-        "shopware/core": "~6.7.0"
+        "shopware/core": "~6.7.0",
+        "shopware/storefront": "~6.7.0"
     }
 }

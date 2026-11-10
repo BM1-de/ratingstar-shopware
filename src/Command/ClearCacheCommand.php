@@ -10,13 +10,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Manual cache-clear path for the RatingStar payloads (CONTRACT §2.11).
+ * Manual cache-clear path, e.g. after rotating the API key in RatingStar:
  *
  *   bin/console ratingstar:seal:cache:clear
  */
 #[AsCommand(
     name: 'ratingstar:seal:cache:clear',
-    description: 'Flush the cached RatingStar seal/JSON-LD payloads.',
+    description: 'Flush the cached RatingStar JSON-LD payloads and the cached pages showing a seal.',
 )]
 class ClearCacheCommand extends Command
 {

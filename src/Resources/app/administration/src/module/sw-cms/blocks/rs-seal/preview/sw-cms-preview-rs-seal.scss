@@ -1,0 +1,16 @@
+.sw-cms-preview-rs-seal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+
+    &__mark {
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+    }
+
+    &__label {
+        font-weight: 600;
+    }
+}

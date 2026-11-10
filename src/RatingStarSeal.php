@@ -4,9 +4,14 @@ namespace RatingStar\Seal;
 
 use Shopware\Core\Framework\Plugin;
 
-// Services, system config and subscribers are wired via
-// src/Resources/config/{services,config}.xml — no plugin lifecycle logic
-// needed yet. Storefront seal block + Google-stars JSON-LD land next.
+/**
+ * RatingStar seal and Google review stars for Shopware 6.
+ *
+ * No lifecycle logic: services, routes and the system configuration are
+ * wired in Resources/config, the shopping experience element lives in the
+ * administration bundle, and Shopware removes the plugin configuration on
+ * uninstall unless the user keeps the data.
+ */
 class RatingStarSeal extends Plugin
 {
 }
