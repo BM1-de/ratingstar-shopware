@@ -19,6 +19,10 @@
 
 ## Installation
 
+Das Plugin gibt es auf zwei Wegen: als ZIP unter [Releases](https://github.com/BM1-de/ratingstar-shopware/releases) oder per Composer als Paket [`ratingstar/shopware-seal`](https://packagist.org/packages/ratingstar/shopware-seal).
+
+### Als ZIP
+
 1. Laden Sie das ZIP in der Administration unter **Erweiterungen → Meine Erweiterungen → Erweiterung hochladen** hoch.
 2. Installieren und aktivieren Sie **RatingStar Siegel & Google-Sterne**.
 3. Öffnen Sie über das Menü mit den drei Punkten **Konfigurieren**.
@@ -31,6 +35,21 @@ bin/console plugin:refresh
 bin/console plugin:install --activate RatingStarSeal
 bin/console cache:clear
 ```
+
+Für ein Update laden Sie das neue ZIP genauso hoch und klicken in der Liste der Erweiterungen auf **Aktualisieren**.
+
+### Per Composer
+
+Für Shops, deren Abhängigkeiten Composer verwaltet:
+
+```bash
+composer require ratingstar/shopware-seal
+bin/console plugin:refresh
+bin/console plugin:install --activate RatingStarSeal
+bin/console cache:clear
+```
+
+Updates holen Sie mit `composer update ratingstar/shopware-seal` und `bin/console plugin:update RatingStarSeal`.
 
 ## Einrichtung
 
