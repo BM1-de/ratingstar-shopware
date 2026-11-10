@@ -11,6 +11,7 @@
 - Twig-Funktion `rs_seal()`: neue Argumente `group`, `attributes`, `mode` und `award`
 - Hinweise zu Domain-Freigabe und Datenschutz in der Plugin-Konfiguration
 - Service- und Routen-Definitionen von XML auf PHP umgestellt
+- Beim Deinstallieren ohne Datenerhalt werden die Siegel-Blöcke und -Elemente aus allen Erlebniswelten entfernt
 
 # 0.1.0
 

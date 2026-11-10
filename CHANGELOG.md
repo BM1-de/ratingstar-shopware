@@ -11,6 +11,7 @@
 - Twig function `rs_seal()`: new arguments `group`, `attributes`, `mode` and `award`
 - Notes on domain approval and privacy in the plugin configuration
 - Service and route definitions moved from XML to PHP
+- Uninstalling without keeping the data removes the seal blocks and elements from all shopping experiences
 
 # 0.1.0
 
