@@ -1,3 +1,9 @@
+# 1.1.0
+
+- Stars for Google: the plugin asks RatingStar for the schema.org type set in your RatingStar account ("Google-Sterne" page: Product or LocalBusiness) and accepts both; until now it accepted LocalBusiness only
+- "Check connection" accepts both types as well
+- Help texts no longer name a fixed type and say that the block counts the same reviews as your seal
+
 # 1.0.0
 
 - Shopping experience element and block "RatingStar seal" with all nine variants, branch or group per element, position of the profile card, every per-embed option and a field for additional data attributes

@@ -1,3 +1,9 @@
+# 1.1.0
+
+- Sterne für Google: Das Plugin fragt bei RatingStar den schema.org-Typ ab, der in Ihrem RatingStar-Konto eingestellt ist (Seite „Google-Sterne“: Product oder LocalBusiness), und nimmt beide an; bisher nur LocalBusiness
+- „Verbindung prüfen“ nimmt ebenfalls beide Typen an
+- Die Hilfetexte nennen keinen festen Typ mehr und sagen, dass der Block dieselben Bewertungen zählt wie Ihr Siegel
+
 # 1.0.0
 
 - Erlebniswelt-Element und -Block „RatingStar-Siegel“ mit allen neun Varianten, Filiale oder Gruppe je Element, Position der Profil-Karte, allen Einzeloptionen und einem Feld für zusätzliche data-Attribute
