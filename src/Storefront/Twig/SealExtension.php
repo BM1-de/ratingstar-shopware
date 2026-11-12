@@ -23,7 +23,7 @@ use Twig\TwigFunction;
  *
  * rs_seal_element() renders the CMS element "rs-seal" from its slot config
  * and offers the same settings. rs_seal_jsonld() is called once from the
- * head template and prints the server-side LocalBusiness block.
+ * head template and prints the server-side rating block.
  */
 class SealExtension extends AbstractExtension
 {

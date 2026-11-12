@@ -89,7 +89,7 @@ class ConnectionChecker
         }
 
         $response = $this->client->fetch(
-            $origin . '/seal/k/' . rawurlencode($apiKey) . '.jsonld',
+            $origin . '/seal/k/' . rawurlencode($apiKey) . RatingStarClient::JSONLD_SUFFIX,
             'application/ld+json, application/json'
         );
 
@@ -99,7 +99,7 @@ class ConnectionChecker
 
         $data = json_decode($response['body'], true);
 
-        if (!\is_array($data) || ($data['@type'] ?? null) !== 'LocalBusiness') {
+        if (!\is_array($data) || !RatingStarClient::isRatingObject($data)) {
             return self::result('apiKey', 'warning', 'http_error', null, 200);
         }
 

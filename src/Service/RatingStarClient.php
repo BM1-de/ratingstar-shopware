@@ -45,10 +45,32 @@ class RatingStarClient
     }
 
     /**
-     * The LocalBusiness object of /seal/k/<key>.jsonld, decoded. The app
-     * already applies plan and count rules (a bare LocalBusiness below the
-     * 4-Star plan or without native reviews). Null on any failure or when
-     * the answer is not a LocalBusiness object.
+     * Path suffix of the JSON-LD endpoint, see getJsonLd().
+     */
+    public const JSONLD_SUFFIX = '.jsonld?schema=product';
+
+    /**
+     * schema.org types RatingStar answers with.
+     */
+    public const ACCEPTED_TYPES = ['LocalBusiness', 'Product'];
+
+    /**
+     * Whether decoded JSON-LD is an object of an accepted type.
+     *
+     * @param array<mixed> $data
+     */
+    public static function isRatingObject(array $data): bool
+    {
+        return \in_array($data['@type'] ?? null, self::ACCEPTED_TYPES, true);
+    }
+
+    /**
+     * The rating object of /seal/k/<key>.jsonld, decoded. The app already
+     * applies plan and count rules (a bare LocalBusiness below the 4-Star
+     * plan or without reviews). `schema=product` tells it that this plugin
+     * can print the Product type; whether the answer is a Product or a
+     * LocalBusiness is set in the RatingStar backend. Null on any failure or
+     * when the answer is neither.
      *
      * The cache can fail (pool folder not writable, Redis not reachable or
      * read-only). Then there is no data and no request: an answer that
@@ -64,7 +86,7 @@ class RatingStarClient
             return null;
         }
 
-        $url = $origin . '/seal/k/' . rawurlencode($apiKey) . '.jsonld';
+        $url = $origin . '/seal/k/' . rawurlencode($apiKey) . self::JSONLD_SUFFIX;
 
         try {
             $item = $this->cache->getItem('ratingstar_seal_' . sha1($url));
@@ -87,7 +109,7 @@ class RatingStarClient
             return null;
         }
 
-        $data = $this->requestLocalBusiness($url);
+        $data = $this->requestRatingObject($url);
 
         if ($data === null) {
             // The entry saved above already remembers the failure.
@@ -193,7 +215,7 @@ class RatingStarClient
     /**
      * @return array<string, mixed>|null
      */
-    private function requestLocalBusiness(string $url): ?array
+    private function requestRatingObject(string $url): ?array
     {
         $result = $this->fetch($url, 'application/ld+json, application/json');
 
@@ -214,8 +236,8 @@ class RatingStarClient
 
         $decoded = json_decode($result['body'], true);
 
-        if (!\is_array($decoded) || ($decoded['@type'] ?? null) !== 'LocalBusiness') {
-            $this->logger->warning('RatingStar: {url} did not return a LocalBusiness object.', [
+        if (!\is_array($decoded) || !self::isRatingObject($decoded)) {
+            $this->logger->warning('RatingStar: {url} did not return a LocalBusiness or Product object.', [
                 'url' => self::maskKey($url),
             ]);
 

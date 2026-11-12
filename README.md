@@ -7,7 +7,7 @@
 - **Siegel und Widgets in neun Varianten** als Erlebniswelt-Element und als Twig-Funktion für Themes: Rundsiegel, Banderole, Profil-Karte, Bewertungsleiste, Gesamtnote, Zitat, Karussell, Bewertungswand und Fußleiste.
 - **Je Einbindung einstellbar:** Variante, Filiale oder Gruppe, Position der Profil-Karte und alle Darstellungsoptionen des Code-Generators von RatingStar.
 - **Gruppen-Siegel** über alle Filialen einer Gruppe.
-- **Sterne für Google:** ein `LocalBusiness`-Block (schema.org) im Seitenkopf, vom Shop-Server abgeholt und zwischengespeichert.
+- **Sterne für Google:** ein Block mit strukturierten Daten (schema.org) im Seitenkopf, vom Shop-Server abgeholt und zwischengespeichert.
 - **Statisches Bild** ohne JavaScript für Rundsiegel, Banderole und Profil-Karte.
 - **Verbindung prüfen:** Die Plugin-Konfiguration bestätigt Filiale, Gruppe und API-Key am RatingStar-Server.
 - Alle Einstellungen gelten für alle Verkaufskanäle und lassen sich je Verkaufskanal überschreiben.
@@ -156,9 +156,9 @@ Für die Sterne für Google gehört dann der API-Key der Gruppe in die Plugin-Ko
 
 ## Sterne für Google
 
-Ist ein gültiger API-Key hinterlegt, holt der Shop-Server die strukturierten Daten Ihrer Bewertungen bei RatingStar ab und gibt sie als einen Block im Seitenkopf aus (schema.org, Typ `LocalBusiness`). Je Seite gibt es genau einen Block; die Siegel verzichten dann von selbst auf eine eigene Ausgabe.
+Ist ein gültiger API-Key hinterlegt, holt der Shop-Server die strukturierten Daten Ihrer Bewertungen bei RatingStar ab und gibt sie als einen Block im Seitenkopf aus (schema.org). Je Seite gibt es genau einen Block; die Siegel verzichten dann von selbst auf eine eigene Ausgabe.
 
-Eine Gesamtbewertung enthält der Block ab dem 4-Star-Tarif und sobald es eigene, auf RatingStar abgegebene Bewertungen gibt. Aus anderen Portalen übernommene Bewertungen zählen dafür nicht. Ob Google Sterne anzeigt, entscheidet Google.
+Eine Gesamtbewertung enthält der Block ab dem 4-Star-Tarif und sobald es Bewertungen gibt. Es zählen dieselben Bewertungen wie in Ihrem Siegel. Ob Google Sterne anzeigt, entscheidet Google.
 
 Steht eine Seite für eine andere Filiale oder Gruppe als der übrige Shop, zum Beispiel eine Standortseite, geben Sie ihr deren Schlüssel mit:
 

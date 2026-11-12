@@ -7,12 +7,12 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Prints the server-side rich snippet: one
- * <script type="application/ld+json"> with the LocalBusiness object of the
- * key-scoped endpoint. It needs no connection from the visitor's browser to
+ * <script type="application/ld+json"> with the rating object of the
+ * key-scoped endpoint (LocalBusiness or Product, as set in RatingStar). It needs no connection from the visitor's browser to
  * RatingStar.
  *
  * The remote answer never reaches the page as raw text: it is decoded,
- * checked for "@type": "LocalBusiness" and encoded again with the JSON_HEX_*
+ * checked for an accepted "@type" and encoded again with the JSON_HEX_*
  * flags, so a company name or review text containing "</script>" cannot end
  * the block. The content itself is passed through unchanged — plan and count
  * rules are applied by the app.
@@ -56,7 +56,7 @@ class JsonLdRenderer
 
         $data = $this->client->getJsonLd($this->config->getBaseOrigin($salesChannelId), $key);
 
-        if ($data === null || ($data['@type'] ?? null) !== 'LocalBusiness') {
+        if ($data === null || !RatingStarClient::isRatingObject($data)) {
             return '';
         }
 
